@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow,noarchive"></head><body>
+<title>POS 바코드 스캔 문제 — 현황·해결방안·향후계획</title>
+<style>
+  :root{
+    --paper:#FAFAF7;
+    --ink:#202723;
+    --muted:#5C6862;
+    --line:#DDE2DC;
+    --accent:#1E6B4F;
+    --accent-soft:#E7F1EB;
+    --fail:#B3402F;
+    --fail-soft:#F9ECE9;
+    --warn:#8A6D1F;
+    --warn-soft:#F3EFE2;
+    --code-bg:#EFF2EE;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;background:var(--paper);color:var(--ink);
+    font-family:"Pretendard","Malgun Gothic","맑은 고딕",-apple-system,"Segoe UI",sans-serif;
+    line-height:1.68;font-size:15px;
+  }
+  .wrap{max-width:880px;margin:0 auto;padding:0 24px 80px;}
+  .barcode-strip{
+    height:14px;
+    background:repeating-linear-gradient(90deg,
+      var(--ink) 0 2px, transparent 2px 5px,
+      var(--ink) 5px 9px, transparent 9px 11px,
+      var(--ink) 11px 12px, transparent 12px 17px,
+      var(--ink) 17px 19px, transparent 19px 26px);
+    opacity:.85;
+  }
+  header{padding:38px 0 26px;border-bottom:1px solid var(--line);}
+  .eyebrow{font-size:12px;font-weight:700;letter-spacing:.14em;color:var(--accent);text-transform:uppercase;margin:0 0 10px;}
+  h1{font-size:27px;line-height:1.35;margin:0 0 10px;text-wrap:balance;font-weight:800;}
+  .lede{color:var(--muted);margin:0;max-width:64ch;}
+  .meta{font-size:12.5px;color:var(--muted);margin-top:14px;}
+
+  section{margin-top:46px;}
+  h2{font-size:20px;font-weight:800;margin:0 0 4px;display:flex;align-items:center;gap:10px;}
+  h2 .sec-no{
+    flex:none;background:var(--ink);color:#fff;font-size:12px;font-weight:800;
+    letter-spacing:.06em;padding:4px 12px;border-radius:20px;
+  }
+  .sub{color:var(--muted);font-size:13.5px;margin:4px 0 18px;}
+  h3{font-size:16px;font-weight:800;margin:24px 0 10px;}
+
+  code,.bc{
+    font-family:Consolas,"Cascadia Mono",monospace;font-variant-numeric:tabular-nums;
+    background:var(--code-bg);padding:1px 7px;border-radius:4px;font-size:13px;
+  }
+
+  .pill{display:inline-block;padding:2px 11px;border-radius:20px;font-size:12px;font-weight:800;white-space:nowrap;}
+  .pill.done{background:var(--accent-soft);color:var(--accent);}
+  .pill.doing{background:var(--warn-soft);color:var(--warn);}
+  .pill.todo{background:#EAEDEA;color:var(--muted);}
+  .pill.bad{background:var(--fail-soft);color:var(--fail);}
+
+  .tbl-scroll{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:#fff;}
+  table{width:100%;border-collapse:collapse;font-size:13.5px;min-width:600px;}
+  th,td{padding:11px 14px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top;}
+  tr:last-child td{border-bottom:none;}
+  thead th{background:var(--ink);color:#fff;font-size:12.5px;}
+  td.k{font-weight:700;white-space:nowrap;background:#FDFDFB;}
+  td .note{display:block;font-size:12.5px;color:var(--muted);margin-top:3px;}
+
+  .callout{margin-top:14px;padding:14px 18px;border-left:4px solid var(--accent);background:var(--accent-soft);border-radius:0 8px 8px 0;font-size:14px;}
+  .callout.warn{border-left-color:var(--warn);background:var(--warn-soft);}
+
+  /* 증거 카드 */
+  .ev{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:6px;}
+  .ev-card{border:1px solid var(--line);border-radius:10px;background:#fff;padding:16px 18px;}
+  .ev-card .num{font-family:Consolas,monospace;font-variant-numeric:tabular-nums;font-size:24px;font-weight:700;line-height:1.2;}
+  .ev-card .num.bad{color:var(--fail);}
+  .ev-card .num.good{color:var(--accent);}
+  .ev-card .cap{font-size:13px;color:var(--muted);margin-top:4px;}
+
+  /* 타임라인 */
+  .timeline{position:relative;padding-left:34px;margin-top:10px;}
+  .timeline::before{content:"";position:absolute;left:12px;top:8px;bottom:8px;width:2px;background:var(--line);}
+  .tl-item{position:relative;padding:0 0 26px 8px;}
+  .tl-item:last-child{padding-bottom:0;}
+  .tl-item::before{
+    content:"";position:absolute;left:-29px;top:5px;width:14px;height:14px;border-radius:50%;
+    background:#fff;border:3px solid var(--muted);
+  }
+  .tl-item.done::before{background:var(--accent);border-color:var(--accent);}
+  .tl-item.doing::before{background:#fff;border-color:var(--warn);}
+  .tl-item h4{margin:0 0 4px;font-size:15.5px;font-weight:800;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+  .tl-item p{margin:0;font-size:14px;color:#3A443E;}
+  .tl-item small{color:var(--muted);}
+
+  footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);font-size:12.5px;color:var(--muted);}
+</style>
+
+<div class="barcode-strip" aria-hidden="true"></div>
+<div class="wrap">
+
+<header>
+  <p class="eyebrow">KANZI · Barcode Operations · 종합 현황</p>
+  <h1>POS 바코드 스캔 문제 — 현황 · 해결방안 · 향후계획</h1>
+  <p class="lede">일부 상품 라벨을 매장에서 스캔하면 품목 대신 토탈세일즈 화면으로 넘어가 판매가 불가능한 문제. 원인 진단을 완료하고 설정 수정 테스트 착수 단계에 있습니다.</p>
+  <p class="meta">2026-07-03 기준 · 근거: HQ DB(kpos_kanzi) 판매 실측 + 버우드 K_Pos Setup.INI 분석 + 매장 스캔 영상 2건</p>
+</header>
+
+<!-- ============ 1. 현황 ============ -->
+<section>
+  <h2><span class="sec-no">1</span>현황 — 무엇이, 왜 안 되나</h2>
+  <p class="sub">확정된 문제는 <b>20접두 바코드</b> 하나 — 영숫자 쪽은 당초 의심했으나 매출 데이터로 재평가</p>
+
+  <h3>점검한 원인 후보 2가지</h3>
+  <div class="tbl-scroll">
+    <table>
+      <thead><tr><th>후보</th><th>해당 상품</th><th>관련 설정</th><th>판정</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="k">① 20접두 숫자 13자리</td>
+          <td>박스히어로 자동생성 바코드 <b>102개 품목</b><span class="note">아도라블·댄지·오즈브릿지·쏘베 등 / 예: <span class="bc">2006066837817</span></span></td>
+          <td><code>use Weight Code</code> (WeightCodeUse)<span class="note">저울(중량) 바코드로 오해석 → 매칭 실패</span></td>
+          <td><span class="pill bad">문제 확정</span><span class="note">SSOBE 스캔 영상에서 토탈세일즈 점프 실측 (7/3)</span></td>
+        </tr>
+        <tr>
+          <td class="k">② 영숫자 바코드</td>
+          <td>쉬즈미스·리스트·모리모리스 등 KB Trend 라벨<span class="note">예: <span class="bc">SSKPON41080CR55</span></span></td>
+          <td><code>Use Character Barcode</code> (UseCharBarcode)<span class="note">당초 리드컴=0 의심</span></td>
+          <td><span class="pill done">정상 확인</span><span class="note">6월 매출에서 영숫자 바코드 정상 조회·판매 (리드컴 31건 포함) — 테스트 스캔 ㄴ으로 최종 재확인만</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>증상의 정체</h3>
+  <p style="margin:0;font-size:14.5px;">실측된 증상: <b>20접두 바코드를 스캔하면 품목 대신 토탈세일즈(영수증 검색) 화면으로 점프</b> (SSOBE 영상). POS가 20접두를 중량바코드로 쪼개 해석 → 품목 매칭 실패 → 실패한 입력값을 영수증 번호 검색으로 넘기는 폴백으로 추정됩니다. 바코드가 DB에 정상 등록돼 있어도(102개 등록 확인) 매칭 자체가 시도되지 않습니다.</p>
+
+  <h3>영향 규모 (판매 실측 · 20접두는 6/9 등록 시작 이후 기준)</h3>
+  <div class="ev">
+    <div class="ev-card"><div class="num bad">0건 / 3주+</div><div class="cap">20접두 102개 품목의 전 매장 판매 — 등록 시작(6/9 박스히어로 첫 업로드)부터 현재까지. 진열돼 있어도 스캔 판매 불가</div></div>
+    <div class="ev-card"><div class="num good">정상</div><div class="cap">영숫자 바코드(SSKPON… 등)는 6월 매출에서 정상 조회·판매 — 리드컴 31건 포함, 문제 아님 확인</div></div>
+    <div class="ev-card"><div class="num good">3,235건</div><div class="cap">30접두(KPOS 정규발급)의 6월 정상 판매 — 시스템 자체는 건강함</div></div>
+  </div>
+
+  <div class="callout">
+    <b>판매 기록 원리 (확인 완료):</b> 판매 라인에는 상품의 등록 바코드가 <b>변환 없이 원형 그대로</b> 기록됩니다. 따라서 스캔이 살아나면 20접두·영숫자 바코드도 매출 조회에 그대로 잡히고, 박스히어로 재고차감 연동(바코드 매칭)도 자동으로 정상 작동합니다.
+  </div>
+</section>
+
+<!-- ============ 2. 해결방안 ============ -->
+<section>
+  <h2><span class="sec-no">2</span>해결방안 — 채택안과 근거</h2>
+  <p class="sub">라벨은 그대로 두고 POS 설정만 수정 <span class="pill doing">테스트 착수</span></p>
+
+  <div class="tbl-scroll">
+    <table>
+      <thead><tr><th>방안</th><th>내용</th><th>판단</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="k">A안 — 라벨 재발급·재부착</td>
+          <td>102개+신규 브랜드 라벨 전체 재출력 후 매장별 재부착</td>
+          <td><span class="pill bad">기각</span><span class="note">수백 장 인력·시간 소모, 근본 원인 미해결</span></td>
+        </tr>
+        <tr>
+          <td class="k">B안 — POS 설정 2개 수정</td>
+          <td>K_Pos <b>Basic Setup 화면에서 변경</b> (실제 설정 화면 확보, 아래 이미지 참조):<br>
+          · <b>핵심</b>: Weight Setup 탭 → <code>use Weight Code</code> <b>체크 해제</b> (20접두 살리기)<br>
+          · 겸사 확인: Device Setup 탭 → <code>Use Character Barcode</code> 체크 상태 확인 (영숫자는 정상 판매 중이므로 체크돼 있으면 그대로)<br>
+          → Save → 프로그램 재시작<span class="note">INI 직접 편집(WeightCodeUse=0)은 동일 효과의 대체 수단</span></td>
+          <td><span class="pill done">채택</span><span class="note">체크박스 2개 · 기존 라벨 그대로 사용 · 즉시 원복 가능</span></td>
+        </tr>
+        <tr>
+          <td class="k">보조 — 신규 바코드 규칙</td>
+          <td>박스히어로 자동생성(20접두) 대신 kanzi-mcp가 양식 생성 시 자동 발급:<br><span class="bc">29 + 발급일(YYMMDD) + 일련4자리 + 체크디지트</span></td>
+          <td><span class="pill todo">설계 완료</span><span class="note">함정 대역(20)·KPOS 발급대역(30~32)·실상품(88) 모두 회피, 구현 대기</span></td>
+        </tr>
+        <tr>
+          <td class="k">임시 우회 — 상품명 검색 판매</td>
+          <td>설정 수정 전까지 직원이 상품 검색으로 수동 판매</td>
+          <td><span class="pill done">가능</span><span class="note">스캔 불가 상품도 상품 검색으로 판매 시 기록 정상</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout">
+    <b>B안의 안전 근거:</b> 칸지 매장은 저울(중량) 상품이 없고 저울 하드웨어도 미연결 상태(<code>Scale=</code>·<code>BalancePort=</code> 빈값, <code>UseBalance=0</code>)라 중량바코드 기능을 꺼도 잃는 기능이 없습니다. UI(Basic Setup)에서 저장하면 프로그램이 INI를 직접 갱신하므로 "켠 채 수정하면 되돌아가는" 함정도 없습니다. 절차에 백업·원복 방법과 기존 상품 회귀 확인(30접두 스캔)이 포함돼 있습니다.
+  </div>
+  <h3>실제 POS 설정 화면</h3>
+  <p style="margin:0 0 10px;font-size:14px;color:var(--muted);">K_Pos ▸ Basic Setup. 하단 안내문대로 저장 후 프로그램 재시작 필요.</p>
+  <figure style="margin:0 0 18px;">
+    <img src="KANZI_01.png" alt="Device Setup 탭 — Use Character Barcode 체크박스" style="max-width:100%;border:1px solid var(--line);border-radius:10px;">
+    <figcaption style="font-size:13px;color:var(--muted);margin-top:6px;">
+      ① <b>Device Setup 탭</b> — 붉은 박스의 <code>Use Character Barcode</code>(INI의 UseCharBarcode)는 <b>체크 상태만 확인</b>. 영숫자 바코드는 6월 매출에서 정상 판매가 확인됐으므로 체크돼 있으면 그대로 둡니다. <code>Add 0 code 128</code>과 Barcode Scanner: Keyboard도 그대로.
+    </figcaption>
+  </figure>
+  <figure style="margin:0 0 6px;">
+    <img src="KANZI_02.png" alt="Weight Setup 탭 — use Weight Code 체크박스" style="max-width:100%;border:1px solid var(--line);border-radius:10px;">
+    <figcaption style="font-size:13px;color:var(--muted);margin-top:6px;">
+      ② <b>Weight Setup 탭</b> — <code>use Weight Code</code>를 <b>체크 해제</b> (INI의 WeightCodeUse). 그 아래 접두 입력칸(이 화면에서는 21/21)은 중량바코드로 해석할 시작 번호 설정(INI의 WC1/WC2)으로 단말마다 값이 다를 수 있음 — 리드컴 테스트 시 원래 값을 기록해 두면 원인 규명에 도움. <code>Weight Item Barcode</code>(4digit/5digit = Code20)는 use Weight Code를 끄면 무의미하므로 건드리지 않습니다.
+    </figcaption>
+  </figure>
+  <div class="callout warn">
+    <b>유보 사항:</b> 설정 해제가 20접두 파싱을 완전히 끄는지는 리드컴 실측으로 최종 확인 — 실패 시 공급사에 문의하고, 그동안 29접두 재발급 + 상품명 검색 병행으로 전환.
+  </div>
+  <div class="callout warn">
+    <b>실행 경로 (중요):</b> 이 설정은 <b>각 매장 POS 단말의 로컬 설정</b>이라 본사 PC(K_Server)에서는 변경 불가. 실행 방법은 ① 매장 매니저가 Basic Setup에서 체크박스 클릭 (권장 — 난이도 낮음) ② 매장 POS 원격접속(AnyDesk 등) 시 본사에서 직접 클릭. 화면의 "Save Web Setting" 버튼이 설정 원격배포 기능인지 대표에게 확인 요청 — 가능하면 최선의 경로.
+  </div>
+</section>
+
+<!-- ============ 3. 진행 상태 ============ -->
+<section>
+  <h2><span class="sec-no">3</span>진행 상태</h2>
+  <p class="sub">완료된 것과 남은 것</p>
+  <div class="tbl-scroll">
+    <table>
+      <thead><tr><th>구분</th><th>항목</th><th>상태</th></tr></thead>
+      <tbody>
+        <tr><td class="k" rowspan="4">진단</td>
+          <td>버우드↔리드컴 Setup.INI 대조 → UseCharBarcode 차이 확인</td><td><span class="pill done">완료</span></td></tr>
+        <tr><td>HQ DB 판매 실측 (접두별·매장별·월별) → 20접두 전멸 확인</td><td><span class="pill done">완료</span></td></tr>
+        <tr><td>SSOBE 스캔 영상으로 20접두 문제 실측 확정 · 영숫자는 6월 매출 정상 조회로 문제없음 판정</td><td><span class="pill done">완료</span></td></tr>
+        <tr><td>판매 기록 원리 확인 (바코드 원형 기록, 변환 없음)</td><td><span class="pill done">완료</span></td></tr>
+        <tr><td class="k" rowspan="3">문서</td>
+          <td>바코드 규칙 비교 보고서 (HTML·아티팩트)</td><td><span class="pill done">완료</span></td></tr>
+        <tr><td>매장 매니저용 테스트 절차서 (HTML·PDF·노션 공유)</td><td><span class="pill done">완료</span></td></tr>
+        <tr><td>대표 보고 문안 (리드컴 선행 반영)</td><td><span class="pill done">완료</span></td></tr>
+        <tr><td class="k" rowspan="4">실행</td>
+          <td>실제 POS 설정 화면 확보 — Device Setup·Weight Setup 탭 (수정할 체크박스 2개 확정)</td><td><span class="pill done">완료</span></td></tr>
+        <tr><td>"Save Web Setting" 버튼이 설정 원격배포 기능인지 확인</td><td><span class="pill doing">진행 중</span></td></tr>
+        <tr><td>절차서를 UI(체크박스) 방식으로 개정 → 리드컴 매니저에게 전달</td><td><span class="pill todo">대기</span></td></tr>
+        <tr><td>리드컴 1차 테스트 → 결과 보고 수신</td><td><span class="pill todo">대기</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ============ 4. 향후 계획 ============ -->
+<section>
+  <h2><span class="sec-no">4</span>향후계획 — 단계별 로드맵</h2>
+  <p class="sub">각 단계는 앞 단계 성공을 조건으로 진행</p>
+  <div class="timeline">
+    <div class="tl-item doing">
+      <h4>STEP 1 — 리드컴 1차 테스트 <span class="pill doing">진행 중</span></h4>
+      <p>K_Pos <b>Basic Setup ▸ Weight Setup 탭에서 <code>use Weight Code</code> 해제</b> (겸사: Device Setup 탭 Use Character Barcode 체크 상태 확인) → Save → 재시작 → 검증 스캔 3종(20접두·영숫자·기존 30접두) → 테스트 결제·취소 → HQ DB에서 판매 기록 원격 검증. 수정 전 원래 값(체크 상태·중량 접두 번호) 기록.</p>
+      <p><small>실행 주체: 매니저 클릭 또는 매장 POS 원격접속 시 직접. 리드컴 선행 이유: 문제 제보 매장이라 증상 재현·해소 확인이 즉석에서 가능.</small></p>
+    </div>
+    <div class="tl-item">
+      <h4>STEP 2 — 전 매장 확산 <span class="pill todo">예정</span></h4>
+      <p>리드컴 성공 시 버우드 → 스트라스필드 → 카브라마타 → 뱅크스타운 순차 적용 (매장당 POS 2~3대). 각 매장 원래 설정값 수집·기록.</p>
+      <p><small>카브라마타는 영숫자 판매 0건 매장이라 리드컴과 동일 문제 보유 의심 — 우선순위 높음.</small></p>
+    </div>
+    <div class="tl-item">
+      <h4>STEP 3 — 신규 바코드 규칙 구현 <span class="pill todo">예정</span></h4>
+      <p>kanzi-mcp에 29접두 자동발급기 구현(<code>map_row_to_boxhero</code> 1곳 수정 → 신상마켓·MDM 양식 모두 적용) + 테스트 상품 1건 매장 실측 → 통과 시 신규 등록 전면 적용.</p>
+      <p><small>원천 바코드(제조사 88x·스타일코드) 우선, 빈칸일 때만 자동발급. BoxHero 자동생성 개입 차단.</small></p>
+    </div>
+    <div class="tl-item">
+      <h4>STEP 4 — 사후 검증·모니터링 <span class="pill todo">예정</span></h4>
+      <p>적용 2주 후 HQ DB에서 20접두·영숫자 판매 발생 여부 확인 → "판매 0건" 상태 해소 검증. 브랜드별 매출 리포트에 신규 유입 반영.</p>
+    </div>
+    <div class="tl-item">
+      <h4>비상 계획 — STEP 1 실패 시</h4>
+      <p>① 중량바코드 설정 관련 공급사(KPOS 개발사) 문의 ② 그동안 20접두 102개는 29접두 재발급 + 상품명 검색 판매 병행.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  KANZI 바코드 운영 종합 현황 · 2026-07-03 · 데이터: kpos_kanzi(HQ, 읽기전용) in_out 2026년 1~7월 / sangmast 120,523행 · 관련 문서: 「바코드_규칙_비교_보고서」 「POS 설정 수정 테스트(매니저 절차서)」
+</footer>
+
+</div>
+
+</body></html>
