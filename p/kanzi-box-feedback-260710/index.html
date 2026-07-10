@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"><meta name="robots" content="noindex,nofollow,noarchive">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KANZI BOX 기능 요청·피드백 보고서 (2026-07-10)</title>
+<style>
+  :root{
+    --ink:#1a2030; --sub:#5b6472; --line:#e3e6ec; --bg:#f4f5f8;
+    --accent:#4f46e5; --accent-soft:#eef0fb;
+    --red:#c0392b; --red-soft:#fdf0ee;
+    --amber:#b45309; --amber-soft:#fdf6ec;
+    --green:#15803d; --green-soft:#eefaf1;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{font-family:'Malgun Gothic','Segoe UI',sans-serif; background:var(--bg); color:var(--ink); line-height:1.65; font-size:14px;}
+  .page{max-width:860px; margin:0 auto; padding:36px 20px 80px;}
+
+  /* 헤더 */
+  .cover{background:#fff; border:1px solid var(--line); border-radius:14px; padding:34px 38px; margin-bottom:22px; border-top:5px solid var(--accent);}
+  .cover .kicker{font-size:12px; font-weight:700; color:var(--accent); letter-spacing:1px; margin-bottom:8px;}
+  .cover h1{font-size:25px; line-height:1.35; margin-bottom:12px;}
+  .cover .meta{font-size:12.5px; color:var(--sub);}
+  .cover .meta span{margin-right:16px;}
+
+  /* 섹션 */
+  section{background:#fff; border:1px solid var(--line); border-radius:14px; padding:28px 34px; margin-bottom:22px;}
+  h2{font-size:18px; margin-bottom:4px; display:flex; align-items:center; gap:10px;}
+  h2 .no{display:inline-flex; align-items:center; justify-content:center; width:26px; height:26px; border-radius:8px; background:var(--accent); color:#fff; font-size:14px; flex:0 0 auto;}
+  .sub{font-size:12.5px; color:var(--sub); margin-bottom:16px;}
+  h3{font-size:14.5px; margin:20px 0 8px;}
+  p{margin-bottom:10px;}
+  ul,ol{margin:0 0 12px 20px;}
+  li{margin-bottom:5px;}
+  code{font-family:Consolas,monospace; font-size:12.5px; background:#f1f2f6; border-radius:4px; padding:1px 5px;}
+  b{font-weight:700;}
+
+  /* 배지 */
+  .badge{display:inline-block; font-size:11px; font-weight:700; padding:3px 10px; border-radius:20px; vertical-align:middle;}
+  .badge.p1{background:var(--red-soft); color:var(--red);}
+  .badge.p2{background:var(--amber-soft); color:var(--amber);}
+  .badge.p3{background:var(--accent-soft); color:var(--accent);}
+  .badge.ok{background:var(--green-soft); color:var(--green);}
+
+  /* 표 */
+  table{width:100%; border-collapse:collapse; margin:10px 0 14px; font-size:13px;}
+  th{background:#f7f8fb; text-align:left; font-size:12px; color:var(--sub); letter-spacing:.3px;}
+  th,td{border:1px solid var(--line); padding:8px 11px; vertical-align:top;}
+  tr.hl td{background:var(--accent-soft);}
+
+  /* 콜아웃 */
+  .call{border-radius:10px; padding:13px 16px; margin:12px 0; font-size:13px;}
+  .call.red{background:var(--red-soft); border:1px solid #f2cfc9;}
+  .call.green{background:var(--green-soft); border:1px solid #cdeeda;}
+  .call.blue{background:var(--accent-soft); border:1px solid #dcdff7;}
+  .call b.t{display:block; margin-bottom:4px;}
+
+  /* 요약 카드 */
+  .cards{display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin:6px 0 4px;}
+  .card{border:1px solid var(--line); border-radius:12px; padding:15px 16px;}
+  .card .h{font-size:13px; font-weight:700; margin-bottom:5px;}
+  .card .d{font-size:12px; color:var(--sub); line-height:1.55;}
+  @media (max-width:700px){ .cards{grid-template-columns:1fr;} }
+
+  footer{font-size:11.5px; color:var(--sub); text-align:center; margin-top:8px;}
+
+  @media print{
+    body{background:#fff;}
+    .page{padding:0; max-width:none;}
+    section,.cover{border-radius:0; border-left:none; border-right:none; page-break-inside:avoid;}
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="cover">
+    <div class="kicker">KANZI BOX 검토 보고서</div>
+    <h1>기능 요청·피드백 정리<br><span style="font-size:16px; color:var(--sub); font-weight:400;">엑셀 내보내기 버그 · 이미지 일괄 등록 · 바코드 라벨 디자이너</span></h1>
+    <div class="meta">
+      <span><b>작성일</b> 2026-07-10</span>
+      <span><b>작성</b> 양종진 (서울쇼룸)</span>
+      <span><b>수신</b> 박건후 실장</span>
+      <span><b>대상</b> kanzi.connectglobal.kr</span>
+    </div>
+  </div>
+
+  <!-- 요약 -->
+  <section>
+    <h2>요약 — 요청 3건, 우선순위순</h2>
+    <div class="sub">2026-07-09~10 전 메뉴 실사용 검토 + 재현 테스트 기반. 상세 근거는 각 섹션 참조.</div>
+    <div class="cards">
+      <div class="card">
+        <div class="h"><span class="badge p1">1순위 · 버그</span><br>엑셀 내보내기 실패</div>
+        <div class="d">생성 ~98초 vs 타임아웃 35~40초 → 503. 대량 수정 업무가 현재 막혀 있음. 쿼리 최적화 요청.</div>
+      </div>
+      <div class="card">
+        <div class="h"><span class="badge p2">2순위 · 기능</span><br>이미지 일괄 등록</div>
+        <div class="d">이미지 3,500개({SKU}.jpg) 준비 완료. InvenTree API 토큰만 발급되면 서울쇼룸에서 직접 처리 가능 — 개발 공수 최소.</div>
+      </div>
+      <div class="card">
+        <div class="h"><span class="badge p3">3순위 · 기능</span><br>바코드 라벨 디자이너</div>
+        <div class="d">매장 택 출력용. 동작 프로토타입 2종으로 구현 검증 완료 — 프론트 중심 1~2일 + 저장 API 1개 규모.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 1. 엑셀 내보내기 버그 -->
+  <section>
+    <h2><span class="no">1</span>버그: 엑셀 내보내기 다운로드 실패 <span class="badge p1">우선순위 1</span></h2>
+    <div class="sub">데이터 관리 → 엑셀 내보내기 → 상품목록.xlsx</div>
+
+    <p><b>증상</b> — 버튼 클릭 시 로딩 스피너만 계속 돌고 파일이 다운로드되지 않음. 에러 표시 없음.</p>
+
+    <h3>재현 결과 (2026-07-10, 4회 테스트)</h3>
+    <table>
+      <tr><th style="width:90px;">시도</th><th>방식</th><th>결과</th></tr>
+      <tr><td>1, 3회차</td><td>UI 버튼 클릭 (앵커 다운로드)</td><td><b>약 35~40초 후 HTTP 503</b> → 파일 없음, 화면 에러 표시 없음</td></tr>
+      <tr class="hl"><td>2, 4회차</td><td>페이지 내 fetch로 끝까지 대기</td><td><b>98초 후 200 OK</b> — 404,835 bytes, 3,485행 × 24열 정상 파일 수신</td></tr>
+    </table>
+    <ul>
+      <li>엔드포인트: <code>GET /box/api/export/products.xlsx</code></li>
+      <li>같은 시간대 다른 API·화면은 모두 정상 → 서버 다운이 아니라 <b>export 생성 자체가 느림</b></li>
+      <li>생성 완료 전(35~40초)에 중간 경로(프록시 또는 앱)가 503으로 종료 → 다운로드 실패</li>
+      <li>콘솔 에러 없음 → 프론트가 503을 처리하지 않아 스피너가 무한 지속</li>
+    </ul>
+
+    <h3>원인 추정</h3>
+    <p>3,485개 상품 × 위치 8곳 재고 조회에 98초 소요 — 이 규모(405KB)면 수 초가 정상이라, 상품별 위치재고를 개별 조회하는 <b>N+1 쿼리 패턴</b>(약 28,000 쿼리)일 가능성이 높습니다.</p>
+
+    <div class="call red">
+      <b class="t">요청 사항</b>
+      ① (근본) export 쿼리를 일괄 JOIN/GROUP BY로 — 수 초 내 응답 목표<br>
+      ② (임시) 프록시 read timeout 120초 이상 상향 — 이것만으로도 일단 다운로드 가능<br>
+      ③ (UX) 실패 시 스피너 해제 + "잠시 후 다시 시도" 에러 메시지 표시
+    </div>
+  </section>
+
+  <!-- 2. 이미지 일괄 등록 -->
+  <section>
+    <h2><span class="no">2</span>기능: 제품 이미지 일괄 등록 <span class="badge p2">우선순위 2</span></h2>
+    <div class="sub">현재 제품목록 3,485개 전체가 이미지 없음(placeholder) 상태</div>
+
+    <h3>현황 확인 (3개 경로 모두 확인)</h3>
+    <table>
+      <tr><th style="width:180px;">경로</th><th>확인 결과</th></tr>
+      <tr><td>제품 수정 모달</td><td>"이미지 (변경 시에만)" 단건 파일 업로드만 존재</td></tr>
+      <tr><td>엑셀 대량 업로드/내보내기</td><td>양식 24컬럼에 이미지·썸네일 컬럼 없음 (속성 '썸네일링크'는 있으나 양식 미포함)</td></tr>
+      <tr><td>엔진 콘솔 (InvenTree)</td><td>Part 이미지 API 표준 지원 → <b>스크립트 일괄 등록 가능 경로 존재</b></td></tr>
+    </table>
+
+    <h3>이미지 소스 확보 완료 (2026-07-10 전수조사)</h3>
+    <p>박스히어로 API 전수조사(3,498품목) 결과, <b>1,682개(48.1%)가 이미지 보유</b> — 쉬즈미스 1,089 · 리스트 297 · 오조크 202 등. photo_url이 서명 없는 CloudFront 퍼블릭 URL이라 <b>무인증 다운로드 가능 검증 완료</b>(HTTP 200, image/jpeg 실수신). SKU 체계가 KANZI BOX와 동일하므로 매칭 → 업로드 파이프라인이 성립합니다. 나머지 51.9%는 로컬 백업 {SKU}.jpg·사방넷/신상 재수집으로 2차 보충 예정.</p>
+
+    <h3>요청 — 두 가지 방안 중 택 1</h3>
+    <table>
+      <tr><th style="width:70px;"></th><th>방안</th><th>박실장님 공수</th></tr>
+      <tr class="hl"><td><b>A안</b><br>(권장)</td><td><b>InvenTree API 토큰 발급</b> → 서울쇼룸에서 박스히어로 이미지 1,682개를 내려받아 Part image API로 직접 일괄 등록 (다운로드→SKU 매칭→업로드 스크립트는 서울쇼룸이 준비)</td><td>토큰 발급 + 목록/상세 썸네일 노출만</td></tr>
+      <tr><td><b>B안</b></td><td>KANZI BOX UI에 <b>파일명=SKU 매칭 ZIP 일괄 업로드</b> 기능 추가</td><td>업로드 UI + 매칭 로직 개발</td></tr>
+    </table>
+    <div class="call green">
+      <b class="t">기대 효과</b>
+      제품목록·상세에 썸네일이 보이면 매장·창고에서 품목 확인 속도가 크게 개선됩니다. 박스히어로에서 유일하게 아쉬웠던 전환 격차 중 하나입니다.
+    </div>
+  </section>
+
+  <!-- 3. 라벨 디자이너 -->
+  <section>
+    <h2><span class="no">3</span>기능: 바코드 라벨 디자이너 <span class="badge p3">우선순위 3</span></h2>
+    <div class="sub">현재: 제품명 + Code128 + SKU 고정 레이아웃, 브라우저 인쇄만 가능</div>
+
+    <h3>필요 배경</h3>
+    <p>매장 택(tag) 출력에는 <b>가격 표시</b>(TAG가격·판매가)와 <b>용지 규격 대응</b>(감열 롤·A4 라벨지)이 필수입니다. 박스히어로에서는 라벨 디자이너로 처리하던 업무로, 칸지 팀이 실제 사용 중인 템플릿은 감열지 60×40 · 50×30 · 폼텍 3100 세 가지입니다.</p>
+
+    <h3>요청 스펙 — 1차 (핵심)</h3>
+    <table>
+      <tr><th style="width:150px;">항목</th><th>내용</th></tr>
+      <tr><td>용지 설정</td><td>① 감열 라벨: 너비×높이(mm) 입력, 라벨 1장=1페이지 ② A4 라벨지: 폼텍 3100 등 규격 프리셋(칸수·여백 자동) ③ 사용자 지정 + 90° 회전 옵션</td></tr>
+      <tr><td>내용 편집</td><td>행 단위 구성(텍스트/바코드/구분선), 순서 변경. 텍스트에 <code>{{속성}}</code> 변수 + 고정 문구 혼합 — 예: <code>A${{판매가}} / {{색상}}</code>. 기존 속성 20종 그대로 변수 사용</td></tr>
+      <tr><td>텍스트 스타일</td><td>크기 · 굵게 · 정렬 · 최대 줄 수(말줄임)</td></tr>
+      <tr><td>바코드 옵션</td><td>데이터 소스(SKU/바코드), 높이, 하단 텍스트 표시·크기</td></tr>
+      <tr><td>템플릿</td><td>이름 저장 · 목록 선택 · 복제 (팀 공유). 인쇄 흐름은 기존 그대로(담기 → 수량 → 인쇄)</td></tr>
+    </table>
+
+    <h3>2차 (여유 시)</h3>
+    <ul>
+      <li><b>EAN-13</b> — 쉬즈미스 등 레거시 13자리 숫자 바코드용 (체크섬 검증 포함)</li>
+      <li>QR 코드, 요소 자유배치(드래그) 캔버스</li>
+    </ul>
+
+    <h3>구현 검증 완료 (Dry-run)</h3>
+    <div class="call blue">
+      <b class="t">동작하는 프로토타입 2종 첨부 — 브라우저에서 바로 열림</b>
+      ① <code>kanzi_label_designer_dryrun.html</code> — 기본형: 용지 프리셋 + 필드 선택<br>
+      ② <code>kanzi_label_designer_v2.html</code> — 확장형: 용지 3유형 + {{변수}} + 템플릿 관리 + EAN-13<br><br>
+      <b>검증된 사항</b>: Code128 인코더 순수 JS 구현(공개 검증 벡터 일치·바 개수 이론값 일치), EAN-13 인코더(실제 매장 바코드 2013267852907 유효 확인, 체크섬 오류 거부), CSS mm 단위 + 동적 @page로 감열(1장=1페이지)·A4(그리드) 인쇄 정합 확인.<br>
+      → <b>전부 클라이언트 사이드로 동작. 서버는 템플릿 저장 API 1개(JSON)면 충분</b>, 프론트 1~2일 규모 추정.
+    </div>
+
+    <h3>유의사항</h3>
+    <ul>
+      <li>인쇄 시 브라우저 배율 <b>100% 고정</b> 필요 ("페이지에 맞춤" 금지) — 안내 문구 권장</li>
+      <li>폼텍 등 규격 프리셋 값은 실제 라벨지와 대조 후 보정</li>
+      <li>최종 확인은 실물 출력 → 매장 스캐너 스캔 테스트</li>
+    </ul>
+  </section>
+
+  <!-- 부록 -->
+  <section>
+    <h2>부록 — 검토에서 함께 확인된 사항</h2>
+    <table>
+      <tr><th style="width:220px;">항목</th><th>내용</th></tr>
+      <tr><td>K-PoS 매출 정확성 <span class="badge ok">검증 완료</span></td><td>KANZI BOX 매출 분석 ↔ KPOS DB 정본(inout_gubun) 비교: 7/1~7/8 기준 매출·영수증수·객단가·현금/카드, 지점별 5곳 전 항목 <b>센트 단위 완전 일치</b>. 매출 수치는 신뢰 가능.</td></tr>
+      <tr><td>재고 코어 기능</td><td>입출고·조정·이동·히스토리·구매판매반품·재고조사·부족알림 — 박스히어로 동등 수준 확인. 전환 시 업무 공백 없음.</td></tr>
+      <tr><td>향후 제안 (참고)</td><td>POS 판매 → 재고 자동 차감 연동, 브랜드별 매출 리포트(단, <code>gjong IN ('Sale','Return')</code> 필터 필수 — Cancel 라인 포함 시 과대집계), 스캔 모드(입출고 화면 바코드 연속 스캔), 전표 취소/역전표.</td></tr>
+    </table>
+  </section>
+
+  <footer>KANZI BOX 기능 요청·피드백 보고서 · 2026-07-10 · 서울쇼룸 → 박건후 실장</footer>
+</div>
+</body>
+</html>
