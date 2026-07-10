@@ -6,25 +6,27 @@
 <title>KANZI BOX 기능 요청·피드백 보고서 (2026-07-10)</title>
 <style>
   :root{
-    --ink:#1a2030; --sub:#5b6472; --line:#e3e6ec; --bg:#f4f5f8;
-    --accent:#4f46e5; --accent-soft:#eef0fb;
-    --red:#c0392b; --red-soft:#fdf0ee;
-    --amber:#b45309; --amber-soft:#fdf6ec;
+    --ink:#0E1526; --sub:#6B7688; --line:#E8ECF3; --bg:#F7F9FC;
+    --accent:#2657E8; --accent-soft:#EEF3FE;
+    --red:#D14343; --red-soft:#FDEFEF;
+    --amber:#B45309; --amber-soft:#FFF6E6;
     --green:#15803d; --green-soft:#eefaf1;
   }
   *{box-sizing:border-box; margin:0; padding:0;}
-  body{font-family:'Malgun Gothic','Segoe UI',sans-serif; background:var(--bg); color:var(--ink); line-height:1.65; font-size:14px;}
+  body{font-family:"Pretendard","SUIT","Malgun Gothic","맑은 고딕",-apple-system,"Segoe UI",sans-serif; background:var(--bg); color:var(--ink); line-height:1.65; font-size:14px;}
   .page{max-width:860px; margin:0 auto; padding:36px 20px 80px;}
 
   /* 헤더 */
-  .cover{background:#fff; border:1px solid var(--line); border-radius:14px; padding:34px 38px; margin-bottom:22px; border-top:5px solid var(--accent);}
-  .cover .kicker{font-size:12px; font-weight:700; color:var(--accent); letter-spacing:1px; margin-bottom:8px;}
-  .cover h1{font-size:25px; line-height:1.35; margin-bottom:12px;}
+  .back{margin:0 0 14px; font-size:13px; font-weight:700;}
+  .back a{color:var(--accent); text-decoration:none;}
+  .cover{background:#fff; border:1px solid var(--line); border-radius:16px; padding:34px 38px; margin-bottom:22px; border-top:5px solid var(--accent);}
+  .cover .kicker{font-size:12px; font-weight:700; color:var(--sub); letter-spacing:.2em; text-transform:uppercase; margin-bottom:8px;}
+  .cover h1{font-size:26px; line-height:1.35; margin-bottom:12px; font-weight:800; letter-spacing:-.02em;}
   .cover .meta{font-size:12.5px; color:var(--sub);}
   .cover .meta span{margin-right:16px;}
 
   /* 섹션 */
-  section{background:#fff; border:1px solid var(--line); border-radius:14px; padding:28px 34px; margin-bottom:22px;}
+  section{background:#fff; border:1px solid var(--line); border-radius:16px; padding:28px 34px; margin-bottom:22px;}
   h2{font-size:18px; margin-bottom:4px; display:flex; align-items:center; gap:10px;}
   h2 .no{display:inline-flex; align-items:center; justify-content:center; width:26px; height:26px; border-radius:8px; background:var(--accent); color:#fff; font-size:14px; flex:0 0 auto;}
   .sub{font-size:12.5px; color:var(--sub); margin-bottom:16px;}
@@ -44,15 +46,15 @@
 
   /* 표 */
   table{width:100%; border-collapse:collapse; margin:10px 0 14px; font-size:13px;}
-  th{background:#f7f8fb; text-align:left; font-size:12px; color:var(--sub); letter-spacing:.3px;}
+  th{background:#F7F9FC; text-align:left; font-size:12px; color:var(--sub); letter-spacing:.3px;}
   th,td{border:1px solid var(--line); padding:8px 11px; vertical-align:top;}
   tr.hl td{background:var(--accent-soft);}
 
   /* 콜아웃 */
   .call{border-radius:10px; padding:13px 16px; margin:12px 0; font-size:13px;}
-  .call.red{background:var(--red-soft); border:1px solid #f2cfc9;}
+  .call.red{background:var(--red-soft); border:1px solid #F2C9C9;}
   .call.green{background:var(--green-soft); border:1px solid #cdeeda;}
-  .call.blue{background:var(--accent-soft); border:1px solid #dcdff7;}
+  .call.blue{background:var(--accent-soft); border:1px solid #D4E0FB;}
   .call b.t{display:block; margin-bottom:4px;}
 
   /* 요약 카드 */
@@ -73,6 +75,8 @@
 </head>
 <body>
 <div class="page">
+
+  <p class="back"><a href="../../">← 공유 문서</a></p>
 
   <div class="cover">
     <div class="kicker">KANZI BOX 검토 보고서</div>

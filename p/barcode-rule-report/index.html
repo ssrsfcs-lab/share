@@ -3,15 +3,15 @@
 <title>바코드 규칙 비교 — BoxHero 자동생성 vs kanzi-mcp 제안</title>
 <style>
   :root{
-    --paper:#FAFAF7;
-    --ink:#202723;
-    --muted:#5C6862;
-    --line:#DDE2DC;
-    --accent:#1E6B4F;
-    --accent-soft:#E7F1EB;
-    --fail:#B3402F;
-    --fail-soft:#F9ECE9;
-    --code-bg:#EFF2EE;
+    --paper:#FFFFFF;
+    --ink:#0E1526;
+    --muted:#6B7688;
+    --line:#E8ECF3;
+    --accent:#2657E8;
+    --accent-soft:#EEF3FE;
+    --fail:#D14343;
+    --fail-soft:#FDEFEF;
+    --code-bg:#F1F4F9;
   }
   *{box-sizing:border-box;}
   body{
@@ -32,11 +32,13 @@
     opacity:.85;
   }
   header{padding:40px 0 28px;border-bottom:1px solid var(--line);}
+  .back{margin:24px 0 0;font-size:13px;font-weight:700;}
+  .back a{color:var(--accent);text-decoration:none;}
   .eyebrow{
-    font-size:12px;font-weight:700;letter-spacing:.14em;color:var(--accent);
+    font-size:12px;font-weight:700;letter-spacing:.2em;color:var(--muted);
     text-transform:uppercase;margin:0 0 10px;
   }
-  h1{font-size:27px;line-height:1.35;margin:0 0 10px;text-wrap:balance;font-weight:800;}
+  h1{font-size:29px;line-height:1.32;margin:0 0 10px;text-wrap:balance;font-weight:800;letter-spacing:-.02em;}
   .lede{color:var(--muted);margin:0;max-width:62ch;}
   .meta{font-size:12.5px;color:var(--muted);margin-top:14px;}
 
@@ -45,7 +47,7 @@
     font-size:19px;font-weight:800;margin:0 0 6px;
     display:flex;align-items:center;gap:10px;
   }
-  h2::before{content:"";width:5px;height:20px;background:var(--accent);border-radius:1px;}
+  h2::before{content:"";width:5px;height:20px;background:var(--accent);border-radius:3px;}
   .sub{color:var(--muted);font-size:13.5px;margin:0 0 18px;}
 
   code,.bc{
@@ -58,7 +60,7 @@
   .flow{display:flex;flex-direction:column;gap:0;margin-top:6px;}
   .step{
     display:flex;gap:14px;align-items:flex-start;
-    padding:13px 16px;border:1px solid var(--line);border-radius:8px;background:#fff;
+    padding:13px 16px;border:1px solid var(--line);border-radius:12px;background:#fff;
   }
   .step + .arrow{width:2px;height:18px;background:var(--line);margin-left:34px;}
   .step .no{
@@ -67,11 +69,11 @@
     font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;
     margin-top:2px;
   }
-  .step.fail{border-color:#E4B3AA;background:var(--fail-soft);}
+  .step.fail{border-color:#F2C9C9;background:var(--fail-soft);}
   .step.fail .no{background:var(--fail);color:#fff;}
   .step b{display:block;margin-bottom:2px;}
   .step p{margin:0;font-size:13.5px;color:var(--muted);}
-  .step.fail p{color:#7C3327;}
+  .step.fail p{color:#A03232;}
 
   .callout{
     margin-top:18px;padding:14px 18px;border-left:4px solid var(--accent);
@@ -81,7 +83,7 @@
 
   /* 증거 카드 */
   .ev{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;}
-  .ev-card{border:1px solid var(--line);border-radius:8px;background:#fff;padding:16px 18px;}
+  .ev-card{border:1px solid var(--line);border-radius:14px;background:#fff;padding:16px 18px;}
   .ev-card .num{
     font-family:Consolas,monospace;font-variant-numeric:tabular-nums;
     font-size:26px;font-weight:700;line-height:1.2;
@@ -91,7 +93,7 @@
   .ev-card .cap{font-size:13px;color:var(--muted);margin-top:4px;}
 
   /* 비교표 */
-  .tbl-scroll{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:#fff;}
+  .tbl-scroll{overflow-x:auto;border:1px solid var(--line);border-radius:14px;background:#fff;}
   table{width:100%;border-collapse:collapse;font-size:13.5px;min-width:640px;}
   th,td{padding:11px 14px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line);}
   tr:last-child td{border-bottom:none;}
@@ -100,14 +102,14 @@
     position:sticky;top:0;
   }
   thead th:first-child{width:130px;}
-  td.k{font-weight:700;white-space:nowrap;color:var(--ink);background:#FDFDFB;}
+  td.k{font-weight:700;white-space:nowrap;color:var(--ink);background:#FAFBFD;}
   .pill{
     display:inline-block;padding:2px 10px;border-radius:20px;
     font-size:12px;font-weight:700;white-space:nowrap;
   }
   .pill.ok{background:var(--accent-soft);color:var(--accent);}
   .pill.no{background:var(--fail-soft);color:var(--fail);}
-  .pill.wait{background:#F3EFE2;color:#8A6D1F;}
+  .pill.wait{background:#FFF6E6;color:#B45309;}
   td .note{display:block;font-size:12.5px;color:var(--muted);margin-top:3px;}
 
   /* 규칙 해부 */
@@ -122,10 +124,10 @@
     font-size:11.5px;font-weight:600;margin-top:6px;color:var(--muted);letter-spacing:0;
   }
   .seg.s1{background:var(--ink);color:#fff;}
-  .seg.s1 small{color:#C9D2CC;}
+  .seg.s1 small{color:#B9C2D6;}
   .seg.s2{background:var(--accent-soft);color:var(--accent);}
   .seg.s3{background:var(--code-bg);}
-  .seg.s4{background:#F3EFE2;color:#8A6D1F;}
+  .seg.s4{background:#FFF6E6;color:#B45309;}
 
   footer{
     margin-top:56px;padding-top:18px;border-top:1px solid var(--line);
@@ -140,6 +142,7 @@
 <div class="barcode-strip" aria-hidden="true"></div>
 <div class="wrap">
 
+<p class="back"><a href="../../">← 공유 문서</a></p>
 <header>
   <p class="eyebrow">KANZI · Barcode Operations</p>
   <h1>BoxHero 자동생성 바코드가 KPOS에서 안 잡히는 이유와 대체 규칙</h1>

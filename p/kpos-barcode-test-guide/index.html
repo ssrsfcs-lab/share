@@ -3,11 +3,11 @@
 <title>POS 설정 수정 테스트</title>
 <style>
   :root{
-    --paper:#FAFAF7; --ink:#202723; --muted:#5C6862; --line:#DDE2DC;
-    --accent:#1E6B4F; --accent-soft:#E7F1EB;
-    --fail:#B3402F; --fail-soft:#F9ECE9;
-    --warn:#8A6D1F; --warn-soft:#F3EFE2;
-    --code-bg:#EFF2EE;
+    --paper:#FFFFFF; --ink:#0E1526; --muted:#6B7688; --line:#E8ECF3;
+    --accent:#2657E8; --accent-soft:#EEF3FE;
+    --fail:#D14343; --fail-soft:#FDEFEF;
+    --warn:#B45309; --warn-soft:#FFF6E6;
+    --code-bg:#F1F4F9;
   }
   *{box-sizing:border-box;}
   body{
@@ -26,8 +26,10 @@
     opacity:.85;
   }
   header{padding:34px 0 22px;}
-  .eyebrow{font-size:12.5px;font-weight:700;letter-spacing:.13em;color:var(--accent);text-transform:uppercase;margin:0 0 10px;}
-  h1{font-size:26px;line-height:1.35;margin:0 0 10px;font-weight:800;}
+  .back{margin:24px 0 0;font-size:13px;font-weight:700;}
+  .back a{color:var(--accent);text-decoration:none;}
+  .eyebrow{font-size:12.5px;font-weight:700;letter-spacing:.2em;color:var(--muted);text-transform:uppercase;margin:0 0 10px;}
+  h1{font-size:27px;line-height:1.32;margin:0 0 10px;font-weight:800;letter-spacing:-.02em;}
   .lede{color:var(--muted);margin:0;font-size:15px;}
   .facts{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;}
   .fact{background:#fff;border:1px solid var(--line);border-radius:20px;padding:5px 14px;font-size:13px;font-weight:600;color:var(--muted);}
@@ -37,7 +39,7 @@
   .phase-title{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
   .phase-title .badge{background:var(--ink);color:#fff;font-size:12px;font-weight:800;letter-spacing:.08em;padding:4px 12px;border-radius:20px;}
   .phase-title h2{margin:0;font-size:19px;font-weight:800;}
-  .card{background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden;}
+  .card{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;}
   .step{display:flex;gap:16px;padding:18px 20px;border-bottom:1px solid var(--line);}
   .step:last-child{border-bottom:none;}
   .step .n{
@@ -47,7 +49,7 @@
   }
   .step.key .n{background:var(--fail);}
   .step h3{margin:0 0 4px;font-size:16px;font-weight:800;}
-  .step p{margin:0;font-size:14.5px;color:#3A443E;}
+  .step p{margin:0;font-size:14.5px;color:#3C4657;}
   .step .hint{display:inline-block;margin-top:8px;background:var(--warn-soft);color:var(--warn);padding:4px 12px;border-radius:6px;font-size:13.5px;font-weight:700;}
   code{font-family:Consolas,monospace;background:var(--code-bg);padding:1px 7px;border-radius:4px;font-size:13.5px;}
 
@@ -86,6 +88,7 @@
 <div class="barcode-strip" aria-hidden="true"></div>
 <div class="wrap">
 
+<p class="back"><a href="../../">← 공유 문서</a></p>
 <header>
   <p class="eyebrow">KANZI · 매장 매니저용 절차서</p>
   <h1>POS 설정 수정 테스트</h1>
