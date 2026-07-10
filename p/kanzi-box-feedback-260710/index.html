@@ -105,9 +105,37 @@
     </div>
   </section>
 
+  <!-- 2. 이미지 일괄 등록 -->
+  <section>
+    <h2><span class="no">1</span>기능: 제품 이미지 일괄 등록 <span class="badge p1">우선순위 1</span></h2>
+    <div class="sub">현재 제품목록 3,485개 전체가 이미지 없음(placeholder) 상태</div>
+
+    <h3>현황 확인 (3개 경로 모두 확인)</h3>
+    <table>
+      <tr><th style="width:180px;">경로</th><th>확인 결과</th></tr>
+      <tr><td>제품 수정 모달</td><td>"이미지 (변경 시에만)" 단건 파일 업로드만 존재</td></tr>
+      <tr><td>엑셀 대량 업로드/내보내기</td><td>양식 24컬럼에 이미지·썸네일 컬럼 없음 (속성 '썸네일링크'는 있으나 양식 미포함)</td></tr>
+      <tr><td>엔진 콘솔 (InvenTree)</td><td>Part 이미지 API 표준 지원 → <b>스크립트 일괄 등록 가능 경로 존재</b></td></tr>
+    </table>
+
+    <h3>이미지 소스 확보 완료 (2026-07-10 전수조사)</h3>
+    <p>박스히어로 API 전수조사(3,498품목) 결과, <b>1,682개(48.1%)가 이미지 보유</b> — 쉬즈미스 1,089 · 리스트 297 · 오조크 202 등. photo_url이 서명 없는 CloudFront 퍼블릭 URL이라 <b>무인증 다운로드 가능 검증 완료</b>(HTTP 200, image/jpeg 실수신). SKU 체계가 KANZI BOX와 동일하므로 매칭 → 업로드 파이프라인이 성립합니다. 나머지 51.9%는 로컬 백업 {SKU}.jpg·사방넷/신상 재수집으로 2차 보충 예정.</p>
+
+    <h3>요청 — 두 가지 방안 중 택 1</h3>
+    <table>
+      <tr><th style="width:70px;"></th><th>방안</th><th>박실장님 공수</th></tr>
+      <tr class="hl"><td><b>A안</b><br>(권장)</td><td><b>InvenTree API 토큰 발급</b> → 서울쇼룸에서 박스히어로 이미지 1,682개를 내려받아 Part image API로 직접 일괄 등록 (다운로드→SKU 매칭→업로드 스크립트는 서울쇼룸이 준비)</td><td>토큰 발급 + 목록/상세 썸네일 노출만</td></tr>
+      <tr><td><b>B안</b></td><td>KANZI BOX UI에 <b>파일명=SKU 매칭 ZIP 일괄 업로드</b> 기능 추가</td><td>업로드 UI + 매칭 로직 개발</td></tr>
+    </table>
+    <div class="call green">
+      <b class="t">기대 효과</b>
+      제품목록·상세에 썸네일이 보이면 매장·창고에서 품목 확인 속도가 크게 개선됩니다. 박스히어로에서 유일하게 아쉬웠던 전환 격차 중 하나입니다.
+    </div>
+  </section>
+
   <!-- 1. 엑셀 내보내기 버그 -->
   <section>
-    <h2><span class="no">1</span>개선: 엑셀 내보내기 속도·양식 컬럼 <span class="badge p2">우선순위 2</span></h2>
+    <h2><span class="no">2</span>개선: 엑셀 내보내기 속도·양식 컬럼 <span class="badge p2">우선순위 2</span></h2>
     <div class="sub">데이터 관리 → 엑셀 내보내기 → 상품목록.xlsx</div>
 
     <p><b>증상</b> — 다운로드가 1~2분가량 걸리고(스피너 장시간), 중간에 실패하는 경우도 있음(테스트 4회 중 2회 503). 실패 시 에러 표시 없이 스피너만 지속.</p>
@@ -147,34 +175,6 @@
       <b class="t">확인·요청 사항 (양식)</b>
       ① 대량 수정 업로드 시 양식에 없는 9개 속성이 <b>보존되는지(빈값으로 덮어쓰이지 않는지)</b> 확인 — 확인 전까지 대량 수정 보류 중<br>
       ② 양식에 누락 컬럼 추가 — 최소한 바코드·매입가·판매가는 필수
-    </div>
-  </section>
-
-  <!-- 2. 이미지 일괄 등록 -->
-  <section>
-    <h2><span class="no">2</span>기능: 제품 이미지 일괄 등록 <span class="badge p1">우선순위 1</span></h2>
-    <div class="sub">현재 제품목록 3,485개 전체가 이미지 없음(placeholder) 상태</div>
-
-    <h3>현황 확인 (3개 경로 모두 확인)</h3>
-    <table>
-      <tr><th style="width:180px;">경로</th><th>확인 결과</th></tr>
-      <tr><td>제품 수정 모달</td><td>"이미지 (변경 시에만)" 단건 파일 업로드만 존재</td></tr>
-      <tr><td>엑셀 대량 업로드/내보내기</td><td>양식 24컬럼에 이미지·썸네일 컬럼 없음 (속성 '썸네일링크'는 있으나 양식 미포함)</td></tr>
-      <tr><td>엔진 콘솔 (InvenTree)</td><td>Part 이미지 API 표준 지원 → <b>스크립트 일괄 등록 가능 경로 존재</b></td></tr>
-    </table>
-
-    <h3>이미지 소스 확보 완료 (2026-07-10 전수조사)</h3>
-    <p>박스히어로 API 전수조사(3,498품목) 결과, <b>1,682개(48.1%)가 이미지 보유</b> — 쉬즈미스 1,089 · 리스트 297 · 오조크 202 등. photo_url이 서명 없는 CloudFront 퍼블릭 URL이라 <b>무인증 다운로드 가능 검증 완료</b>(HTTP 200, image/jpeg 실수신). SKU 체계가 KANZI BOX와 동일하므로 매칭 → 업로드 파이프라인이 성립합니다. 나머지 51.9%는 로컬 백업 {SKU}.jpg·사방넷/신상 재수집으로 2차 보충 예정.</p>
-
-    <h3>요청 — 두 가지 방안 중 택 1</h3>
-    <table>
-      <tr><th style="width:70px;"></th><th>방안</th><th>박실장님 공수</th></tr>
-      <tr class="hl"><td><b>A안</b><br>(권장)</td><td><b>InvenTree API 토큰 발급</b> → 서울쇼룸에서 박스히어로 이미지 1,682개를 내려받아 Part image API로 직접 일괄 등록 (다운로드→SKU 매칭→업로드 스크립트는 서울쇼룸이 준비)</td><td>토큰 발급 + 목록/상세 썸네일 노출만</td></tr>
-      <tr><td><b>B안</b></td><td>KANZI BOX UI에 <b>파일명=SKU 매칭 ZIP 일괄 업로드</b> 기능 추가</td><td>업로드 UI + 매칭 로직 개발</td></tr>
-    </table>
-    <div class="call green">
-      <b class="t">기대 효과</b>
-      제품목록·상세에 썸네일이 보이면 매장·창고에서 품목 확인 속도가 크게 개선됩니다. 박스히어로에서 유일하게 아쉬웠던 전환 격차 중 하나입니다.
     </div>
   </section>
 
