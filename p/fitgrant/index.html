@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<title>FITGRANT — Enter</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/wanteddev/wanted-sans@v1.0.3/packages/wanted-sans/fonts/webfonts/variable/complete/WantedSansVariable.css">
+<style>
+  :root { --font: 'Wanted Sans Variable', 'Wanted Sans', -apple-system, BlinkMacSystemFont, sans-serif; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 100%; height: 100%; min-height: 100dvh; background: #000; overflow: hidden; }
+  canvas { position: fixed; inset: 0; width: 100%; height: 100%; }
+
+  #enter-wrap {
+    position: fixed;
+    left: 50%; top: calc(50% + 18px);
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    z-index: 10;
+  }
+  #enter-btn {
+    background: none; border: none; cursor: pointer;
+    text-align: center;
+    text-transform: uppercase;
+    font-family: var(--font);
+    line-height: 1;
+    animation: breathe 1.8s ease-in-out infinite;
+  }
+  #btn-svg {
+    display: block;
+    width: 160px;
+    height: 54px;
+    overflow: visible;
+  }
+  #btn-svg .brand-t {
+    font-family: var(--font);
+    font-size: 19.5px;
+    font-weight: 200;
+    fill: #7eb3ff;
+  }
+  #btn-svg .label-t {
+    font-family: var(--font);
+    font-size: 19.5px;
+    font-weight: 200;
+    fill: rgba(255,255,255,0.75);
+  }
+  #enter-btn:hover {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: scale(1.04) !important;
+    transition: transform 0.3s ease, opacity 0.2s ease !important;
+  }
+  @keyframes breathe {
+    0%, 100% { opacity: 0.55; transform: scale(0.99); }
+    50%      { opacity: 1;    transform: scale(1);    }
+  }
+
+  #fade-overlay {
+    position: fixed;
+    inset: 0;
+    background: #000;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 99;
+    transition: opacity 0.45s ease;
+  }
+
+  #loading-bar-wrap {
+    width: 100%;
+    opacity: 0;
+    transition: opacity 0.18s ease;
+  }
+  #loading-bar-track {
+    position: relative;
+    width: 100%;
+    height: 1.5px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 1px;
+  }
+  #loading-bar-fill {
+    height: 100%;
+    width: 0%;
+    background: #ffffff;
+    border-radius: 1px;
+  }
+  #loading-pct {
+    position: absolute;
+    left: 50%;
+    top: 6px;
+    transform: translateX(-50%);
+    font-family: var(--font);
+    font-size: 10px;
+    font-weight: 300;
+    letter-spacing: 0.14em;
+    color: #ffffff;
+    white-space: nowrap;
+  }
+
+  #copyright {
+    position: fixed;
+    bottom: calc(28px + env(safe-area-inset-bottom, 0px));
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: var(--font);
+    font-size: 10px;
+    font-weight: 300;
+    letter-spacing: 0.18em;
+    color: rgba(255,255,255,0.3);
+    white-space: nowrap;
+    pointer-events: none;
+    z-index: 10;
+  }
+</style>
+</head>
+<body>
+<div id="fade-overlay"></div>
+
+<canvas id="c"></canvas>
+<p id="copyright">Copyright © FITGRANT Inc. All rights reserved.</p>
+<div id="enter-wrap">
+  <button id="enter-btn" onclick="enterSite()">
+    <svg id="btn-svg" viewBox="0 0 160 54" xmlns="http://www.w3.org/2000/svg">
+      <text class="brand-t" x="0" y="20" textLength="160" lengthAdjust="spacing">FITGRANT</text>
+      <text class="label-t" x="0" y="48" textLength="160" lengthAdjust="spacing">ENTER</text>
+    </svg>
+  </button>
+  <div id="loading-bar-wrap">
+    <div id="loading-bar-track">
+      <div id="loading-bar-fill"></div>
+      <span id="loading-pct">0%</span>
+    </div>
+  </div>
+</div>
+
+<script>
+// bfcache: 뒤로가기로 돌아왔을 때 검은 오버레이 초기화
+window.addEventListener('pageshow', function() {
+  var overlay = document.getElementById('fade-overlay');
+  var btn     = document.getElementById('enter-btn');
+  overlay.style.transition = 'none';
+  overlay.style.opacity = '0';
+  btn.style.pointerEvents = '';
+  btn.style.animation = '';
+  btn.style.opacity = '';
+  setTimeout(function() { overlay.style.transition = ''; }, 50);
+});
+
+// 커서 따라 그려지는 튜브 그래픽 (seoullabs.io와 동일한 라이브러리)
+setTimeout(function() {
+  import('https://cdn.jsdelivr.net/npm/threejs-components@0.0.19/build/cursors/tubes1.min.js')
+    .then(function(module) {
+      module.default(document.getElementById('c'), {
+        tubes: {
+          colors: ['#5e72e4', '#8965e0', '#f5365c'],
+          lights: {
+            intensity: 200,
+            colors: ['#21d4fd', '#b721ff', '#f4d03f', '#11cdef']
+          }
+        }
+      });
+    })
+    .catch(function(e) { console.warn('Tubes 로드 실패', e); });
+}, 100);
+
+// 모바일 터치 → 마우스 이벤트 변환 (감도 2배)
+(function() {
+  var canvas = document.getElementById('c');
+  var rect;
+  function getRect() { rect = canvas.getBoundingClientRect(); }
+  getRect();
+  window.addEventListener('resize', getRect);
+
+  canvas.addEventListener('touchmove', function(e) {
+    e.preventDefault();
+    var t = e.touches[0];
+    var cx = rect.left + rect.width / 2;
+    var cy = rect.top  + rect.height / 2;
+    var ax = cx + (t.clientX - cx) * 2;
+    var ay = cy + (t.clientY - cy) * 2;
+    canvas.dispatchEvent(new MouseEvent('mousemove', {
+      clientX: ax, clientY: ay, bubbles: true
+    }));
+  }, { passive: false });
+})();
+
+// ENTER 클릭 → 로딩바 → 페이드아웃 → 메인으로 이동
+function enterSite() {
+  var overlay = document.getElementById('fade-overlay');
+  var barWrap = document.getElementById('loading-bar-wrap');
+  var barFill = document.getElementById('loading-bar-fill');
+  var pctEl   = document.getElementById('loading-pct');
+  var btn     = document.getElementById('enter-btn');
+
+  btn.style.pointerEvents = 'none';
+  btn.style.animation = 'none';
+  btn.style.opacity = '1';
+  barWrap.style.opacity = '1';
+
+  var duration = 650;
+  var start = performance.now();
+  function easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
+
+  function animBar(now) {
+    var t = Math.min((now - start) / duration, 1);
+    var pct = Math.round(easeOutCubic(t) * 100);
+    barFill.style.width = pct + '%';
+    pctEl.textContent = pct + '%';
+    if (t < 1) requestAnimationFrame(animBar);
+  }
+  requestAnimationFrame(animBar);
+
+  setTimeout(function() { overlay.style.opacity = '1'; }, 320);
+  setTimeout(function() { window.location.href = 'home.html'; }, 700);
+}
+</script>
+</body>
+</html>

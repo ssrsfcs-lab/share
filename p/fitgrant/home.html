@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FITGRANT</title>
+<meta name="description" content="FITGRANT">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/wanteddev/wanted-sans@v1.0.3/packages/wanted-sans/fonts/webfonts/variable/complete/WantedSansVariable.css">
+<style>
+/* ============================================================
+   DESIGN SYSTEM  (Seoul Labs 스타일)
+   ============================================================ */
+:root {
+  --font: 'Wanted Sans Variable', 'Wanted Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --bg: #050508;
+  --bg-card: #0d0d14;
+  --line: rgba(255,255,255,0.08);
+  --accent: #7eb3ff;
+  --accent-2: #8965e0;
+  --txt: #ffffff;
+  --txt-dim: rgba(255,255,255,0.55);
+  --txt-faint: rgba(255,255,255,0.32);
+  --maxw: 1120px;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--txt);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+#page { opacity: 0; transition: opacity 0.6s ease; }
+#page.in { opacity: 1; }
+.wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 24px; }
+
+/* ── 스크롤 페이드업 ── */
+.fade-up { opacity: 0; transform: translateY(28px); transition: opacity 0.7s ease, transform 0.7s ease; }
+.fade-up.visible { opacity: 1; transform: translateY(0); }
+
+/* ── Header ── */
+header {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+  background: rgba(5,5,8,0.72);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--line);
+}
+.header-in {
+  max-width: var(--maxw); margin: 0 auto; padding: 0 24px;
+  height: 64px;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.logo {
+  font-size: 15px; font-weight: 300; letter-spacing: 0.32em;
+  color: var(--accent); text-decoration: none;
+}
+nav { display: flex; align-items: center; gap: 28px; }
+nav a {
+  color: var(--txt-dim); text-decoration: none;
+  font-size: 13px; font-weight: 300; letter-spacing: 0.1em;
+  text-transform: uppercase;
+  transition: color 0.2s;
+}
+nav a:hover { color: #fff; }
+.nav-cta {
+  padding: 8px 20px;
+  border: 1px solid rgba(126,179,255,0.45);
+  border-radius: 999px;
+  color: var(--accent) !important;
+  transition: background 0.25s, color 0.25s !important;
+}
+.nav-cta:hover { background: var(--accent); color: #050508 !important; }
+@media (max-width: 720px) { nav a:not(.nav-cta) { display: none; } }
+
+/* ── Hero ── */
+.hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex; flex-direction: column; justify-content: center; align-items: center;
+  text-align: center; padding: 120px 24px 80px;
+  overflow: hidden;
+}
+.hero-bg {
+  position: absolute; inset: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse 70% 45% at 50% 0%, rgba(94,114,228,0.16), transparent 65%),
+    radial-gradient(ellipse 45% 32% at 78% 78%, rgba(137,101,224,0.10), transparent 70%);
+}
+.hero-grid {
+  position: absolute; inset: 0; pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+  background-size: 72px 72px;
+  mask-image: radial-gradient(ellipse 62% 55% at 50% 42%, #000 30%, transparent 75%);
+  -webkit-mask-image: radial-gradient(ellipse 62% 55% at 50% 42%, #000 30%, transparent 75%);
+}
+.hero-eyebrow {
+  font-size: 12px; font-weight: 300;
+  letter-spacing: 0.42em; text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 26px;
+}
+.hero h1 {
+  position: relative;
+  font-size: clamp(34px, 6.2vw, 68px);
+  font-weight: 200;
+  letter-spacing: 0.01em;
+  line-height: 1.28;
+}
+.hero h1 b {
+  font-weight: 500;
+  background: linear-gradient(100deg, #7eb3ff 10%, #a88bff 55%, #f0a5c0 95%);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: transparent;
+}
+.hero-sub {
+  margin-top: 26px;
+  font-size: clamp(14px, 1.7vw, 17px);
+  font-weight: 300;
+  color: var(--txt-dim);
+  letter-spacing: 0.04em;
+  line-height: 1.8;
+}
+.hero-btns { margin-top: 46px; display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; }
+.btn {
+  display: inline-block;
+  padding: 14px 36px;
+  border-radius: 999px;
+  font-size: 13px; font-weight: 400;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  text-decoration: none;
+  transition: transform 0.25s, box-shadow 0.25s, background 0.25s, color 0.25s, border-color 0.25s;
+}
+.btn-primary {
+  background: var(--accent); color: #050508;
+}
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(126,179,255,0.35); }
+.btn-ghost {
+  border: 1px solid rgba(255,255,255,0.25); color: rgba(255,255,255,0.85);
+}
+.btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+.scroll-ind {
+  position: absolute; bottom: 34px; left: 50%; transform: translateX(-50%);
+  font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase;
+  color: var(--txt-faint);
+  animation: bob 2s ease-in-out infinite;
+}
+@keyframes bob { 0%,100% { transform: translate(-50%,0); } 50% { transform: translate(-50%,7px); } }
+
+/* ── Stats ── */
+.stats { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.stats-in {
+  max-width: var(--maxw); margin: 0 auto; padding: 56px 24px;
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px;
+  text-align: center;
+}
+@media (max-width: 720px) { .stats-in { grid-template-columns: repeat(2, 1fr); gap: 36px 16px; } }
+.stat-num {
+  font-size: clamp(28px, 3.6vw, 42px);
+  font-weight: 200; letter-spacing: 0.02em;
+  color: #fff;
+}
+.stat-num b { font-weight: 500; color: var(--accent); }
+.stat-label {
+  margin-top: 10px;
+  font-size: 12px; font-weight: 300;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--txt-faint);
+}
+
+/* ── Section 공통 ── */
+section.block { padding: 120px 0; }
+.sec-eyebrow {
+  font-size: 11px; font-weight: 300;
+  letter-spacing: 0.42em; text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 18px;
+}
+.sec-title {
+  font-size: clamp(26px, 3.8vw, 42px);
+  font-weight: 200;
+  letter-spacing: 0.01em;
+  line-height: 1.4;
+}
+.sec-title b { font-weight: 500; }
+.sec-desc {
+  margin-top: 18px;
+  font-size: 15px; font-weight: 300;
+  color: var(--txt-dim); line-height: 1.85;
+  max-width: 620px;
+}
+
+/* ── Services 카드 ── */
+.cards {
+  margin-top: 56px;
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px;
+}
+@media (max-width: 960px) { .cards { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 560px) { .cards { grid-template-columns: 1fr; } }
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 34px 26px;
+  transition: transform 0.3s ease, border-color 0.3s ease, background 0.3s ease;
+}
+.card:hover {
+  transform: translateY(-6px);
+  border-color: rgba(126,179,255,0.4);
+  background: #10101a;
+}
+.card-icon {
+  width: 44px; height: 44px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 12px;
+  background: rgba(126,179,255,0.1);
+  margin-bottom: 22px;
+}
+.card-icon svg { width: 22px; height: 22px; stroke: var(--accent); fill: none; stroke-width: 1.5; }
+.card h3 {
+  font-size: 17px; font-weight: 500; letter-spacing: 0.03em;
+  margin-bottom: 6px;
+}
+.card .en {
+  font-size: 11px; font-weight: 300; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--accent);
+  margin-bottom: 16px;
+}
+.card p {
+  font-size: 13.5px; font-weight: 300;
+  color: var(--txt-dim); line-height: 1.75;
+}
+
+/* ── About 2단 ── */
+.about-grid {
+  margin-top: 56px;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 60px;
+  align-items: center;
+}
+@media (max-width: 860px) { .about-grid { grid-template-columns: 1fr; gap: 40px; } }
+.about-visual {
+  position: relative;
+  aspect-ratio: 4/3;
+  border-radius: 20px;
+  border: 1px solid var(--line);
+  background:
+    radial-gradient(ellipse 60% 50% at 30% 30%, rgba(94,114,228,0.22), transparent 70%),
+    radial-gradient(ellipse 50% 45% at 75% 75%, rgba(137,101,224,0.18), transparent 70%),
+    #0a0a10;
+  overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+}
+.about-visual span {
+  font-size: clamp(22px, 3vw, 34px); font-weight: 200;
+  letter-spacing: 0.34em; color: rgba(255,255,255,0.85);
+  text-transform: uppercase;
+}
+.about-list { list-style: none; margin-top: 34px; }
+.about-list li {
+  display: flex; gap: 14px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 14px; font-weight: 300; color: var(--txt-dim);
+  line-height: 1.7;
+}
+.about-list li::before { content: "—"; color: var(--accent); flex-shrink: 0; }
+
+/* ── CTA 튜브 배너 ── */
+.cta-banner {
+  position: relative;
+  max-width: var(--maxw); margin: 0 auto;
+  border-radius: 24px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  min-height: 400px;
+  display: flex; align-items: center; justify-content: center;
+  text-align: center;
+  background: #000;
+}
+#cta-canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.cta-content { position: relative; z-index: 2; padding: 60px 24px; pointer-events: none; }
+.cta-content .btn { pointer-events: auto; }
+.cta-content h2 {
+  font-size: clamp(24px, 3.6vw, 40px);
+  font-weight: 200; line-height: 1.4;
+}
+.cta-content h2 b { font-weight: 500; color: var(--accent); }
+.cta-content p {
+  margin-top: 14px;
+  font-size: 14px; font-weight: 300; color: var(--txt-dim);
+}
+.cta-content .btn { margin-top: 34px; }
+.cta-hint {
+  position: absolute; bottom: 18px; left: 50%; transform: translateX(-50%);
+  font-size: 10px; letter-spacing: 0.24em; text-transform: uppercase;
+  color: var(--txt-faint); z-index: 2; pointer-events: none;
+}
+
+/* ── Contact ── */
+.contact-box {
+  margin-top: 56px;
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px;
+}
+@media (max-width: 860px) { .contact-box { grid-template-columns: 1fr; } }
+.contact-item {
+  background: var(--bg-card);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 30px 26px;
+}
+.contact-item .k {
+  font-size: 11px; font-weight: 300; letter-spacing: 0.24em;
+  text-transform: uppercase; color: var(--accent);
+  margin-bottom: 12px;
+}
+.contact-item .v { font-size: 15px; font-weight: 300; color: rgba(255,255,255,0.85); line-height: 1.6; }
+.contact-item a { color: rgba(255,255,255,0.85); text-decoration: none; }
+.contact-item a:hover { color: var(--accent); }
+
+/* ── Footer ── */
+footer {
+  margin-top: 120px;
+  border-top: 1px solid var(--line);
+  padding: 48px 0 56px;
+}
+.footer-in {
+  max-width: var(--maxw); margin: 0 auto; padding: 0 24px;
+  display: flex; justify-content: space-between; align-items: flex-start; gap: 24px; flex-wrap: wrap;
+}
+.footer-logo { font-size: 14px; font-weight: 300; letter-spacing: 0.32em; color: var(--accent); }
+.footer-copy { margin-top: 14px; font-size: 11.5px; font-weight: 300; letter-spacing: 0.06em; color: var(--txt-faint); line-height: 1.8; }
+.footer-links { display: flex; gap: 22px; }
+.footer-links a {
+  font-size: 12px; font-weight: 300; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--txt-dim); text-decoration: none;
+}
+.footer-links a:hover { color: #fff; }
+</style>
+</head>
+<body>
+<div id="page">
+
+  <header>
+    <div class="header-in">
+      <a class="logo" href="home.html">FITGRANT</a>
+      <nav>
+        <a href="#about">About</a>
+        <a href="#services">Services</a>
+        <a href="#contact">Contact</a>
+        <a class="nav-cta" href="#contact">문의하기</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ── HERO ── -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-grid"></div>
+    <div class="hero-eyebrow fade-up">FITGRANT</div>
+    <h1 class="fade-up">메인 카피가 들어가는 자리,<br><b>FITGRANT</b></h1>
+    <p class="hero-sub fade-up">
+      서비스를 소개하는 문구가 들어가는 영역입니다.<br>
+      Placeholder copy for design preview.
+    </p>
+    <div class="hero-btns fade-up">
+      <a class="btn btn-primary" href="#services">Learn More</a>
+      <a class="btn btn-ghost" href="#contact">Contact</a>
+    </div>
+    <div class="scroll-ind">Scroll</div>
+  </section>
+
+  <!-- ── STATS (자리표시 수치) ── -->
+  <div class="stats">
+    <div class="stats-in">
+      <div class="fade-up"><div class="stat-num"><b>100</b>+</div><div class="stat-label">Metric 01</div></div>
+      <div class="fade-up"><div class="stat-num"><b>200</b>+</div><div class="stat-label">Metric 02</div></div>
+      <div class="fade-up"><div class="stat-num"><b>99</b>%</div><div class="stat-label">Metric 03</div></div>
+      <div class="fade-up"><div class="stat-num"><b>24</b>/7</div><div class="stat-label">Metric 04</div></div>
+    </div>
+  </div>
+
+  <!-- ── SERVICES ── -->
+  <section class="block" id="services">
+    <div class="wrap">
+      <div class="sec-eyebrow fade-up">Services</div>
+      <h2 class="sec-title fade-up">섹션 타이틀이 들어가는<br><b>영역입니다</b></h2>
+      <p class="sec-desc fade-up">섹션을 소개하는 설명 문구가 들어가는 자리입니다. 한두 문장 정도의 텍스트가 배치됩니다.</p>
+      <div class="cards">
+        <div class="card fade-up">
+          <div class="card-icon"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></div>
+          <h3>서비스 이름</h3>
+          <div class="en">Service 01</div>
+          <p>서비스에 대한 설명 문구가 들어가는 영역입니다. 두 줄 정도의 텍스트가 배치됩니다.</p>
+        </div>
+        <div class="card fade-up">
+          <div class="card-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 4 5.7 4 9s-1.5 6.4-4 9c-2.5-2.6-4-5.7-4-9s1.5-6.4 4-9z"/></svg></div>
+          <h3>서비스 이름</h3>
+          <div class="en">Service 02</div>
+          <p>서비스에 대한 설명 문구가 들어가는 영역입니다. 두 줄 정도의 텍스트가 배치됩니다.</p>
+        </div>
+        <div class="card fade-up">
+          <div class="card-icon"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/></svg></div>
+          <h3>서비스 이름</h3>
+          <div class="en">Service 03</div>
+          <p>서비스에 대한 설명 문구가 들어가는 영역입니다. 두 줄 정도의 텍스트가 배치됩니다.</p>
+        </div>
+        <div class="card fade-up">
+          <div class="card-icon"><svg viewBox="0 0 24 24"><path d="M8 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM2 21v-1a6 6 0 0 1 6-6M16 11a4 4 0 1 0 0-8M22 21v-1a6 6 0 0 0-4-5.7"/></svg></div>
+          <h3>서비스 이름</h3>
+          <div class="en">Service 04</div>
+          <p>서비스에 대한 설명 문구가 들어가는 영역입니다. 두 줄 정도의 텍스트가 배치됩니다.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── ABOUT ── -->
+  <section class="block" id="about" style="padding-top: 0;">
+    <div class="wrap">
+      <div class="sec-eyebrow fade-up">About</div>
+      <h2 class="sec-title fade-up">회사 소개 타이틀이<br><b>들어가는 영역입니다</b></h2>
+      <div class="about-grid">
+        <div class="about-visual fade-up"><span>FITGRANT</span></div>
+        <div class="fade-up">
+          <p class="sec-desc" style="margin-top:0;">
+            회사를 소개하는 본문 텍스트가 들어가는 영역입니다.
+            두세 문장 정도의 소개 문구가 배치되는 자리입니다.
+          </p>
+          <ul class="about-list">
+            <li>소개 항목 텍스트가 들어가는 자리입니다</li>
+            <li>소개 항목 텍스트가 들어가는 자리입니다</li>
+            <li>소개 항목 텍스트가 들어가는 자리입니다</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── CTA 튜브 배너 (커서 인터랙션) ── -->
+  <section style="padding: 0 24px;">
+    <div class="cta-banner fade-up">
+      <canvas id="cta-canvas"></canvas>
+      <div class="cta-content">
+        <h2>CTA 문구가 들어가는 자리<br><b>FITGRANT</b></h2>
+        <p>마우스를 움직여 보세요.</p>
+        <a class="btn btn-primary" href="#contact">Contact</a>
+      </div>
+      <div class="cta-hint">Move your cursor</div>
+    </div>
+  </section>
+
+  <!-- ── CONTACT ── -->
+  <section class="block" id="contact">
+    <div class="wrap">
+      <div class="sec-eyebrow fade-up">Contact</div>
+      <h2 class="sec-title fade-up"><b>Contact</b></h2>
+      <p class="sec-desc fade-up">문의 안내 문구가 들어가는 영역입니다.</p>
+      <div class="contact-box">
+        <div class="contact-item fade-up">
+          <div class="k">Email</div>
+          <div class="v">email@fitgrant.com</div>
+        </div>
+        <div class="contact-item fade-up">
+          <div class="k">Office</div>
+          <div class="v">주소가 들어가는<br>영역입니다</div>
+        </div>
+        <div class="contact-item fade-up">
+          <div class="k">Social</div>
+          <div class="v"><a href="#">Instagram</a> · <a href="#">LinkedIn</a></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-in">
+      <div>
+        <div class="footer-logo">FITGRANT</div>
+        <div class="footer-copy">Copyright © FITGRANT Inc. All rights reserved.</div>
+      </div>
+      <div class="footer-links">
+        <a href="#about">About</a>
+        <a href="#services">Services</a>
+        <a href="#contact">Contact</a>
+        <a href="index.html">Intro</a>
+      </div>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+// 진입 페이드인
+requestAnimationFrame(function() {
+  requestAnimationFrame(function() {
+    document.getElementById('page').classList.add('in');
+  });
+});
+
+// 스크롤 페이드업
+(function() {
+  var els = document.querySelectorAll('.fade-up');
+  var observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  els.forEach(function(el) { observer.observe(el); });
+  // 히어로는 즉시 표시
+  document.querySelectorAll('.hero .fade-up').forEach(function(el) { el.classList.add('visible'); });
+})();
+
+// CTA 배너: 커서 따라 그려지는 튜브 그래픽 (seoullabs.io와 동일 라이브러리)
+(function() {
+  var canvas = document.getElementById('cta-canvas');
+  if (!canvas) return;
+  setTimeout(function() {
+    import('https://cdn.jsdelivr.net/npm/threejs-components@0.0.19/build/cursors/tubes1.min.js')
+      .then(function(module) {
+        module.default(canvas, {
+          tubes: {
+            colors: ['#5e72e4', '#8965e0', '#f5365c'],
+            lights: {
+              intensity: 200,
+              colors: ['#21d4fd', '#b721ff', '#f4d03f', '#11cdef']
+            }
+          }
+        });
+      })
+      .catch(function(e) { console.warn('Tubes 로드 실패', e); });
+  }, 100);
+})();
+</script>
+</body>
+</html>
