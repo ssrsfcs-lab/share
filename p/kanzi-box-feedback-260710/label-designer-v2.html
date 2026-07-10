@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"><meta name="robots" content="noindex,nofollow,noarchive">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KANZI 라벨 디자이너 v2 — 확장판 Dry Run</title>
+<style>
+  :root{ --ink:#1e2430; --sub:#6b7280; --line:#e5e7eb; --bg:#f6f7fb; --accent:#4f46e5; --soft:#eef0fb; }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{font-family:'Segoe UI','Malgun Gothic',sans-serif; background:var(--bg); color:var(--ink); font-size:13px;}
+  .app{display:flex; min-height:100vh;}
+
+  /* ── 좌측 패널 ─────────────────────────── */
+  .panel{width:400px; flex:0 0 400px; background:#fff; border-right:1px solid var(--line); padding:18px; overflow-y:auto; height:100vh; position:sticky; top:0;}
+  .panel h1{font-size:16px;}
+  .panel .tag{font-size:11px; color:var(--accent); font-weight:600; margin-bottom:12px;}
+  .sec{border-top:1px solid var(--line); padding:12px 0;}
+  .sec>h2{font-size:11.5px; color:var(--sub); letter-spacing:.4px; margin-bottom:9px;}
+  select,input[type=number],input[type=text]{padding:6px 8px; border:1px solid var(--line); border-radius:7px; font-size:12.5px; background:#fff; width:100%;}
+  .row{display:flex; gap:7px; margin-bottom:7px;}
+  .row>div{flex:1;}
+  .row label{font-size:11px; color:var(--sub); display:block; margin-bottom:2px;}
+  .btn{padding:9px 12px; border:none; border-radius:8px; background:var(--accent); color:#fff; font-size:13px; font-weight:600; cursor:pointer;}
+  .btn.ghost{background:#fff; color:var(--ink); border:1px solid var(--line); font-weight:500;}
+  .btn.sm{padding:5px 9px; font-size:11.5px; border-radius:6px;}
+  .btn.danger{background:#fff; color:#c0392b; border:1px solid #f2c9c4;}
+  .hint{font-size:11px; color:var(--sub); line-height:1.5; margin-top:6px;}
+
+  /* 템플릿 칩 */
+  .chips{display:flex; flex-wrap:wrap; gap:6px; margin-bottom:8px;}
+  .chip{padding:6px 10px; border:1px solid var(--line); border-radius:9px; cursor:pointer; background:#fff;}
+  .chip.on{border-color:var(--accent); background:var(--soft);}
+  .chip b{display:block; font-size:12px;}
+  .chip span{font-size:10.5px; color:var(--sub);}
+
+  /* 용지 유형 탭 */
+  .ptabs{display:flex; gap:6px; margin-bottom:9px;}
+  .ptab{flex:1; padding:8px 4px; text-align:center; border:1px solid var(--line); border-radius:8px; cursor:pointer; font-size:12px; background:#fff;}
+  .ptab.on{border-color:var(--accent); background:var(--soft); font-weight:600;}
+
+  /* 구성 요소(행) 편집기 */
+  .rowcard{border:1px solid var(--line); border-radius:9px; padding:8px; margin-bottom:7px; background:#fbfbfd;}
+  .rowcard .head{display:flex; align-items:center; gap:6px; margin-bottom:6px;}
+  .rowcard .head .ty{font-size:11px; font-weight:700; color:var(--accent); flex:1;}
+  .rowcard .head button{border:1px solid var(--line); background:#fff; border-radius:5px; width:22px; height:22px; cursor:pointer; font-size:11px; line-height:1;}
+  .rowcard .grid{display:flex; flex-wrap:wrap; gap:6px;}
+  .rowcard .grid>div{display:flex; align-items:center; gap:4px;}
+  .rowcard .grid label{font-size:10.5px; color:var(--sub); white-space:nowrap;}
+  .rowcard input[type=number]{width:52px;}
+  .rowcard select{width:auto;}
+  .rowcard input[type=text]{width:100%;}
+  .rowcard .content-line{display:flex; gap:6px; margin-bottom:6px;}
+  .addbar{display:flex; gap:6px; flex-wrap:wrap;}
+
+  /* ── 미리보기 ────────────────────────────── */
+  .stage{flex:1; padding:22px; overflow:auto;}
+  .stage h2{font-size:13px; color:var(--sub); margin-bottom:10px;}
+  #preview{display:flex; flex-wrap:wrap; gap:10px; align-items:flex-start;}
+  .sheet{background:#fff; box-shadow:0 2px 10px rgba(0,0,0,.10); position:relative;}
+  .screen-sheet{outline:1px dashed #c7cbe0;}
+  .screen-sheet .lbl{outline:.5px dotted #d8dbe8;}
+
+  .lbl{overflow:hidden; background:#fff; position:relative;}
+  .lbl .inner{width:100%; height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; overflow:hidden;}
+  .lbl .t{width:98%; line-height:1.25;}
+  .lbl .t.clamp1{white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .lbl .t.clampN{display:-webkit-box; -webkit-box-orient:vertical; overflow:hidden;}
+  .lbl .t.inv{background:#000; color:#fff; padding:0 .8mm;}
+  .lbl svg{display:block;}
+  .lbl .btxt{font-family:Consolas,monospace; line-height:1.25;}
+  .lbl .err{color:#c0392b; font-size:6pt;}
+
+  #print-root{display:none;}
+  @media print{
+    .app{display:none !important;}
+    #print-root{display:block !important;}
+    .sheet{box-shadow:none;}
+    html,body{background:#fff;}
+  }
+</style>
+<style id="page-style"></style>
+</head>
+<body>
+
+<div class="app">
+  <div class="panel">
+    <h1>바코드 라벨 디자이너 <span style="font-size:11px;color:var(--sub)">v2</span></h1>
+    <div class="tag">확장판 Dry Run — 용지 3유형 · 변수 · 템플릿 관리 · EAN-13</div>
+
+    <!-- 템플릿 관리 -->
+    <div class="sec">
+      <h2>라벨 디자인 (템플릿)</h2>
+      <div class="chips" id="chips"></div>
+      <div class="row">
+        <div style="flex:2"><input type="text" id="tplName" placeholder="템플릿 이름"></div>
+        <div style="flex:0 0 auto; display:flex; gap:5px;">
+          <button class="btn sm" onclick="tplSave()">저장</button>
+          <button class="btn sm ghost" onclick="tplNew()">새로</button>
+          <button class="btn sm ghost" onclick="tplDup()">복제</button>
+          <button class="btn sm danger" onclick="tplDel()">삭제</button>
+        </div>
+      </div>
+      <div class="hint" id="tplMsg">저장 시 브라우저에 보존됩니다. (실서비스: 팀 단위 서버 저장)</div>
+    </div>
+
+    <!-- 용지 설정 -->
+    <div class="sec">
+      <h2>용지 설정</h2>
+      <div class="ptabs">
+        <div class="ptab" data-k="label"   onclick="setKind('label')">라벨 용지</div>
+        <div class="ptab" data-k="thermal" onclick="setKind('thermal')">감열 라벨</div>
+        <div class="ptab" data-k="custom"  onclick="setKind('custom')">사용자 지정</div>
+      </div>
+
+      <div id="paperLabel">
+        <div class="row">
+          <div><label>제조사</label><select id="maker"></select></div>
+          <div><label>모델</label><select id="model"></select></div>
+        </div>
+        <div class="hint">모델 규격(칸수·여백)이 자동 적용됩니다. <b>시드 데이터이므로 실제 라벨지와 대조 후 보정 필요.</b></div>
+        <div class="row" style="margin-top:6px;">
+          <div><label>라벨 폭</label><input type="number" id="lw" step="0.1"></div>
+          <div><label>높이</label><input type="number" id="lh" step="0.1"></div>
+          <div><label>열</label><input type="number" id="cols" min="1"></div>
+          <div><label>행</label><input type="number" id="rows" min="1"></div>
+        </div>
+        <div class="row">
+          <div><label>시트여백 상(mm)</label><input type="number" id="mt" step="0.1"></div>
+          <div><label>시트여백 좌(mm)</label><input type="number" id="ml" step="0.1"></div>
+        </div>
+      </div>
+
+      <div id="paperWH" style="display:none;">
+        <div class="row">
+          <div><label>너비 (mm)</label><input type="number" id="lw2" step="0.1"></div>
+          <div><label>높이 (mm)</label><input type="number" id="lh2" step="0.1"></div>
+        </div>
+      </div>
+
+      <div class="row" style="margin-top:4px;">
+        <div><label>라벨 내부 여백 (mm)</label><input type="number" id="pad" step="0.1" min="0"></div>
+        <div style="display:flex; align-items:flex-end; padding-bottom:4px;">
+          <label style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--ink);cursor:pointer;">
+            <input type="checkbox" id="rot" style="width:auto"> 90° 회전
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- 구성 요소 -->
+    <div class="sec">
+      <h2>구성 요소 (위→아래 순서로 배치)</h2>
+      <div id="rowsEd"></div>
+      <div class="addbar">
+        <button class="btn sm ghost" onclick="addRow('text')">+ 텍스트</button>
+        <button class="btn sm ghost" onclick="addRow('barcode')">+ 바코드</button>
+        <button class="btn sm ghost" onclick="addRow('line')">+ 구분선</button>
+        <button class="btn sm ghost" onclick="addRow('space')">+ 여백</button>
+      </div>
+      <div class="hint">텍스트에는 <b>{{변수}}</b>와 고정 문구를 섞어 쓸 수 있습니다. 예: <code>A${{판매가}} / {{색상}}</code></div>
+    </div>
+
+    <!-- 인쇄 목록 -->
+    <div class="sec">
+      <h2>인쇄 목록 (샘플 데이터)</h2>
+      <div id="qtyList"></div>
+    </div>
+
+    <button class="btn" style="width:100%" onclick="doPrint()">인쇄 (브라우저 인쇄)</button>
+  </div>
+
+  <div class="stage">
+    <h2 id="stageTitle">미리보기</h2>
+    <div id="preview"></div>
+  </div>
+</div>
+
+<div id="print-root"></div>
+
+<script>
+/* ═══════════ Code128-B 인코더 (v1 검증 완료) ═══════════ */
+const C128=["212222","222122","222221","121223","121322","131222","122213","122312",
+"132212","221213","221312","231212","112232","122132","122231","113222","123122","123221",
+"223211","221132","221231","213212","223112","312131","311222","321122","321221","312212",
+"322112","322211","212123","212321","232121","111323","131123","131321","112313","132113",
+"132311","211313","231113","231311","112133","112331","132131","113123","113321","133121",
+"313121","211331","231131","213113","213311","213131","311123","311321","331121","312113",
+"312311","332111","314111","221411","431111","111224","111422","121124","121421","141122",
+"141221","112214","112412","122114","122411","142112","142211","241211","221114","413111",
+"241112","134111","111242","121142","121241","114212","124112","124211","411212","421112",
+"421211","212141","214121","412121","111143","111341","131141","114113","114311","411113",
+"411311","113141","114131","311141","411131","211412","211214","211232"];
+function code128Svg(text,h,maxW){
+  const vals=[104];
+  for(const ch of text){
+    const v=ch.charCodeAt(0)-32;
+    if(v<0||v>94) throw new Error("Code128-B 불가 문자: "+ch);
+    vals.push(v);
+  }
+  let ck=104; for(let i=1;i<vals.length;i++) ck+=vals[i]*i;
+  vals.push(ck%103);
+  const pattern=vals.map(v=>C128[v]).join("")+"2331112";
+  const total=pattern.split("").reduce((a,c)=>a+ +c,0);
+  const quiet=10, mod=maxW/(total+quiet*2);
+  let x=quiet*mod, bars="", bar=true;
+  for(const c of pattern){
+    const w=+c*mod;
+    if(bar) bars+=`<rect x="${x.toFixed(3)}" y="0" width="${w.toFixed(3)}" height="${h}"/>`;
+    x+=w; bar=!bar;
+  }
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${maxW.toFixed(2)}mm" height="${h}mm" viewBox="0 0 ${maxW.toFixed(2)} ${h}" preserveAspectRatio="none" shape-rendering="crispEdges" fill="#000">${bars}</svg>`;
+}
+
+/* ═══════════ EAN-13 인코더 ═══════════ */
+const EAN_L=["0001101","0011001","0010011","0111101","0100011","0110001","0101111","0111011","0110111","0001011"];
+const EAN_G=EAN_L.map(p=>p.split("").reverse().join(""));            // G = L 좌우반전
+const EAN_R=EAN_L.map(p=>p.replace(/./g,c=>c==="0"?"1":"0"));        // R = L 비트반전
+const EAN_PARITY=["LLLLLL","LLGLGG","LLGGLG","LLGGGL","LGLLGG","LGGLLG","LGGGLL","LGLGLG","LGLGGL","LGGLGL"];
+function ean13Check(d12){
+  let s=0; for(let i=0;i<12;i++) s += +d12[i] * (i%2===0?1:3);
+  return String((10-s%10)%10);
+}
+function ean13Svg(input,h,maxW){
+  const digits=(input||"").replace(/\D/g,"");
+  if(digits.length!==12 && digits.length!==13) throw new Error("EAN-13은 숫자 12~13자리 필요");
+  const d=digits.slice(0,12), full=d+ean13Check(d);
+  if(digits.length===13 && digits!==full) throw new Error("EAN-13 체크섬 불일치 ("+digits[12]+"→"+full[12]+")");
+  const parity=EAN_PARITY[+full[0]];
+  let bits="101";
+  for(let i=1;i<=6;i++) bits += (parity[i-1]==="L"?EAN_L:EAN_G)[+full[i]];
+  bits+="01010";
+  for(let i=7;i<=12;i++) bits += EAN_R[+full[i]];
+  bits+="101";
+  const quiet=11, mod=maxW/(bits.length+quiet*2);
+  let bars="";
+  for(let i=0;i<bits.length;i++){
+    if(bits[i]==="1") bars+=`<rect x="${((quiet+i)*mod).toFixed(3)}" y="0" width="${mod.toFixed(3)}" height="${h}"/>`;
+  }
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${maxW.toFixed(2)}mm" height="${h}mm" viewBox="0 0 ${maxW.toFixed(2)} ${h}" preserveAspectRatio="none" shape-rendering="crispEdges" fill="#000">${bars}</svg>`;
+}
+
+/* ═══════════ 변수 & 샘플 데이터 ═══════════ */
+const VARS=["상품명영문","한글제품명","브랜드","색상","사이즈","시즌","SKU","바코드","판매가","TAG가격","원산지"];
+const ITEMS=[
+  {상품명영문:"(26SS) Lazy Shirt Patch Blazer Jacket", 한글제품명:"(26SS)라쥬 셔츠 패치 블레이저 자켓", 브랜드:"벨리노",
+   색상:"NAVY", 사이즈:"FR", 시즌:"26SS", SKU:"BLN-WKN-NV-FR-KN007NVY", 바코드:"BLN-WKN-NV-FR-KN007NVY",
+   판매가:"59.00", TAG가격:"59,000", 원산지:"중국", qty:2},
+  {상품명영문:"(3 layers) UCL sweatshirt", 한글제품명:"3단UCL 맨투맨(그레이)", 브랜드:"파로",
+   색상:"GRAY", 사이즈:"FR", 시즌:"24SS", SKU:"PAR-WTS-GY-FR-TS039GRY", 바코드:"PAR602WTS039GRY",
+   판매가:"69.00", TAG가격:"69,000", 원산지:"한국", qty:2},
+  {상품명영문:"Slim Tailored Half Coat", 한글제품명:"슬림 테일러드 하프 코트", 브랜드:"쉬즈미스",
+   색상:"BLACK", 사이즈:"66", 시즌:"19FW", SKU:"SSM505WCT001BLK", 바코드:"2013267852907",
+   판매가:"129.00", TAG가격:"129,000", 원산지:"베트남", qty:1},
+];
+function interp(tpl,it){ return tpl.replace(/\{\{(.+?)\}\}/g,(m,k)=> it[k.trim()] ?? ""); }
+
+/* ═══════════ 용지: 제조사/모델 DB (시드) ═══════════ */
+const MAKERS={
+  "Formtec":{
+    "3100 (24칸 64×34)":      {lw:64,  lh:34,  cols:3, rows:8,  mt:12.5, ml:6},
+    "3108 (16칸 99.1×34)":    {lw:99.1,lh:34,  cols:2, rows:8,  mt:12.5, ml:4.7},
+    "3109 (40칸 45.7×25.4)":  {lw:45.7,lh:25.4,cols:4, rows:10, mt:21.5, ml:9.7},
+    "3627 (14칸 99.1×38.1)":  {lw:99.1,lh:38.1,cols:2, rows:7,  mt:15.1, ml:4.7}
+  },
+  "Avery":{
+    "L7159 (24칸 63.5×33.9)": {lw:63.5,lh:33.9,cols:3, rows:8,  mt:12.9, ml:7.2},
+    "L7654 (40칸 45.7×25.4)": {lw:45.7,lh:25.4,cols:4, rows:10, mt:21.5, ml:9.7}
+  }
+};
+
+/* ═══════════ 템플릿 시드 ═══════════ */
+const SEEDS=[
+  {name:"서울쇼룸형 감열 60×40",
+   paper:{kind:"thermal", lw:60, lh:40, cols:1, rows:1, mt:0, ml:0, pad:1.5, rot:false, maker:"", model:""},
+   rows:[
+     {type:"text", tpl:"{{브랜드}}", size:6, bold:false, align:"center", font:"sans", invert:false, maxLines:1},
+     {type:"text", tpl:"{{상품명영문}}", size:7, bold:true, align:"center", font:"sans", invert:false, maxLines:2},
+     {type:"text", tpl:"{{색상}} / {{사이즈}} · {{시즌}}", size:6, bold:false, align:"center", font:"sans", invert:false, maxLines:1},
+     {type:"barcode", src:"{{SKU}}", sym:"code128", h:9, showText:true, textSize:5},
+     {type:"text", tpl:"A${{판매가}}", size:8, bold:true, align:"center", font:"sans", invert:false, maxLines:1}
+   ]},
+  {name:"폼텍 3100 가격택",
+   paper:{kind:"label", maker:"Formtec", model:"3100 (24칸 64×34)", lw:64, lh:34, cols:3, rows:8, mt:12.5, ml:6, pad:1.2, rot:false},
+   rows:[
+     {type:"text", tpl:"{{상품명영문}}", size:6.5, bold:true, align:"center", font:"sans", invert:false, maxLines:1},
+     {type:"text", tpl:"{{색상}} / {{사이즈}}", size:5.5, bold:false, align:"center", font:"sans", invert:false, maxLines:1},
+     {type:"barcode", src:"{{SKU}}", sym:"code128", h:8, showText:true, textSize:4.5},
+     {type:"text", tpl:"₩{{TAG가격}}", size:7, bold:true, align:"center", font:"sans", invert:false, maxLines:1}
+   ]},
+  {name:"레거시 EAN-13 (50×30)",
+   paper:{kind:"custom", lw:50, lh:30, cols:1, rows:1, mt:0, ml:0, pad:1.2, rot:false, maker:"", model:""},
+   rows:[
+     {type:"text", tpl:"{{브랜드}} {{한글제품명}}", size:6, bold:false, align:"center", font:"sans", invert:false, maxLines:1},
+     {type:"barcode", src:"{{바코드}}", sym:"ean13", h:11, showText:true, textSize:6},
+     {type:"text", tpl:"₩{{TAG가격}} ({{사이즈}})", size:6.5, bold:true, align:"center", font:"sans", invert:false, maxLines:1}
+   ]}
+];
+
+/* ═══════════ 상태 ═══════════ */
+const LSKEY="kanzi_label_tpls_v2";
+let templates, curIdx=0, cur;
+function loadAll(){
+  try{ const raw=localStorage.getItem(LSKEY); if(raw){ templates=JSON.parse(raw); if(templates.length) return; } }catch(e){}
+  templates=JSON.parse(JSON.stringify(SEEDS));
+}
+function persist(){ localStorage.setItem(LSKEY, JSON.stringify(templates)); }
+function pickTpl(i){ curIdx=i; cur=JSON.parse(JSON.stringify(templates[i])); syncPanel(); renderRowsEd(); render(); }
+
+const $=id=>document.getElementById(id);
+
+/* ═══════════ 템플릿 관리 ═══════════ */
+function renderChips(){
+  $("chips").innerHTML=templates.map((t,i)=>{
+    const p=t.paper;
+    const desc=p.kind==="label" ? (p.model||"라벨용지") : (p.kind==="thermal"?"감열":"지정")+` ${p.lw}×${p.lh}`;
+    return `<div class="chip ${i===curIdx?'on':''}" onclick="pickTpl(${i})"><b>${t.name}</b><span>${desc}</span></div>`;
+  }).join("");
+}
+function tplSave(){
+  cur.name=$("tplName").value.trim()||cur.name;
+  templates[curIdx]=JSON.parse(JSON.stringify(cur));
+  persist(); renderChips();
+  $("tplMsg").textContent="저장됨 · "+new Date().toLocaleTimeString();
+}
+function tplNew(){
+  templates.push(JSON.parse(JSON.stringify(SEEDS[0])));
+  templates[templates.length-1].name="새 템플릿";
+  persist(); pickTpl(templates.length-1); renderChips();
+}
+function tplDup(){
+  const c=JSON.parse(JSON.stringify(cur)); c.name=cur.name+" (복제)";
+  templates.push(c); persist(); pickTpl(templates.length-1); renderChips();
+}
+function tplDel(){
+  if(templates.length<=1){ $("tplMsg").textContent="마지막 템플릿은 삭제할 수 없습니다."; return; }
+  templates.splice(curIdx,1); persist(); pickTpl(Math.max(0,curIdx-1)); renderChips();
+}
+
+/* ═══════════ 용지 패널 ═══════════ */
+function setKind(k){
+  cur.paper.kind=k;
+  if(k==="label" && !cur.paper.model){
+    cur.paper.maker="Formtec";
+    cur.paper.model=Object.keys(MAKERS.Formtec)[0];
+    Object.assign(cur.paper, MAKERS.Formtec[cur.paper.model]);
+  }
+  syncPanel(); render();
+}
+function fillMakers(){
+  $("maker").innerHTML=Object.keys(MAKERS).map(m=>`<option ${m===cur.paper.maker?'selected':''}>${m}</option>`).join("");
+  const mk=$("maker").value;
+  $("model").innerHTML=Object.keys(MAKERS[mk]).map(m=>`<option ${m===cur.paper.model?'selected':''}>${m}</option>`).join("");
+}
+function syncPanel(){
+  $("tplName").value=cur.name;
+  document.querySelectorAll(".ptab").forEach(el=>el.classList.toggle("on", el.dataset.k===cur.paper.kind));
+  const isLabel=cur.paper.kind==="label";
+  $("paperLabel").style.display=isLabel?"block":"none";
+  $("paperWH").style.display=isLabel?"none":"block";
+  if(isLabel){
+    fillMakers();
+    $("lw").value=cur.paper.lw; $("lh").value=cur.paper.lh;
+    $("cols").value=cur.paper.cols; $("rows").value=cur.paper.rows;
+    $("mt").value=cur.paper.mt; $("ml").value=cur.paper.ml;
+  }else{
+    $("lw2").value=cur.paper.lw; $("lh2").value=cur.paper.lh;
+  }
+  $("pad").value=cur.paper.pad; $("rot").checked=!!cur.paper.rot;
+  renderChips();
+}
+$("maker").addEventListener("change",()=>{ cur.paper.maker=$("maker").value; cur.paper.model=Object.keys(MAKERS[cur.paper.maker])[0]; applyModel(); });
+$("model").addEventListener("change",()=>{ cur.paper.model=$("model").value; applyModel(); });
+function applyModel(){
+  Object.assign(cur.paper, MAKERS[cur.paper.maker][cur.paper.model]);
+  syncPanel(); render();
+}
+[["lw","lw"],["lh","lh"],["cols","cols"],["rows","rows"],["mt","mt"],["ml","ml"],["lw2","lw"],["lh2","lh"],["pad","pad"]]
+ .forEach(([id,key])=>$(id).addEventListener("input",()=>{ cur.paper[key]=+$(id).value||0; render(); }));
+$("rot").addEventListener("change",()=>{ cur.paper.rot=$("rot").checked; render(); });
+
+/* ═══════════ 구성 요소 편집기 ═══════════ */
+const TYNAME={text:"텍스트", barcode:"바코드", line:"구분선", space:"여백"};
+function addRow(t){
+  const def={
+    text:{type:"text", tpl:"{{상품명영문}}", size:6, bold:false, align:"center", font:"sans", invert:false, maxLines:1},
+    barcode:{type:"barcode", src:"{{SKU}}", sym:"code128", h:8, showText:true, textSize:5},
+    line:{type:"line", th:0.3},
+    space:{type:"space", h:1}
+  }[t];
+  cur.rows.push(def); renderRowsEd(); render();
+}
+function delRow(i){ cur.rows.splice(i,1); renderRowsEd(); render(); }
+function moveRow(i,d){
+  const j=i+d; if(j<0||j>=cur.rows.length) return;
+  [cur.rows[i],cur.rows[j]]=[cur.rows[j],cur.rows[i]];
+  renderRowsEd(); render();
+}
+function insertVar(i,v){
+  if(!v) return;
+  const inp=document.querySelector(`#rowsEd [data-tpl="${i}"]`);
+  const tok="{{"+v+"}}";
+  const s=inp.selectionStart??inp.value.length;
+  inp.setRangeText(tok, s, inp.selectionEnd??s, "end");
+  cur.rows[i].tpl=inp.value; render();
+}
+function renderRowsEd(){
+  $("rowsEd").innerHTML=cur.rows.map((r,i)=>{
+    const head=`<div class="head"><span class="ty">${i+1}. ${TYNAME[r.type]}</span>
+      <button onclick="moveRow(${i},-1)">↑</button><button onclick="moveRow(${i},1)">↓</button>
+      <button onclick="delRow(${i})" style="color:#c0392b">✕</button></div>`;
+    let body="";
+    if(r.type==="text"){
+      body=`<div class="content-line">
+          <input type="text" data-tpl="${i}" value="${r.tpl.replace(/"/g,'&quot;')}">
+          <select style="flex:0 0 92px" onchange="insertVar(${i},this.value);this.value=''">
+            <option value="">+변수</option>${VARS.map(v=>`<option>${v}</option>`).join("")}
+          </select>
+        </div>
+        <div class="grid">
+          <div><label>크기</label><input type="number" step="0.5" min="3" value="${r.size}" data-p="size" data-i="${i}"></div>
+          <div><label>굵게</label><input type="checkbox" ${r.bold?'checked':''} data-p="bold" data-i="${i}" style="width:auto"></div>
+          <div><label>정렬</label><select data-p="align" data-i="${i}">
+            <option value="left" ${r.align==='left'?'selected':''}>좌</option>
+            <option value="center" ${r.align==='center'?'selected':''}>중</option>
+            <option value="right" ${r.align==='right'?'selected':''}>우</option></select></div>
+          <div><label>글꼴</label><select data-p="font" data-i="${i}">
+            <option value="sans" ${r.font==='sans'?'selected':''}>고딕</option>
+            <option value="serif" ${r.font==='serif'?'selected':''}>명조</option>
+            <option value="mono" ${r.font==='mono'?'selected':''}>모노</option></select></div>
+          <div><label>반전</label><input type="checkbox" ${r.invert?'checked':''} data-p="invert" data-i="${i}" style="width:auto"></div>
+          <div><label>최대줄</label><input type="number" min="0" max="5" value="${r.maxLines}" data-p="maxLines" data-i="${i}"></div>
+        </div>`;
+    }else if(r.type==="barcode"){
+      body=`<div class="grid">
+          <div><label>데이터</label><select data-p="src" data-i="${i}">
+            <option value="{{SKU}}" ${r.src==='{{SKU}}'?'selected':''}>SKU</option>
+            <option value="{{바코드}}" ${r.src==='{{바코드}}'?'selected':''}>바코드</option></select></div>
+          <div><label>유형</label><select data-p="sym" data-i="${i}">
+            <option value="code128" ${r.sym==='code128'?'selected':''}>Code 128</option>
+            <option value="ean13" ${r.sym==='ean13'?'selected':''}>EAN-13</option></select></div>
+          <div><label>높이mm</label><input type="number" step="0.5" min="3" value="${r.h}" data-p="h" data-i="${i}"></div>
+          <div><label>하단텍스트</label><input type="checkbox" ${r.showText?'checked':''} data-p="showText" data-i="${i}" style="width:auto"></div>
+          <div><label>텍스트크기</label><input type="number" step="0.5" min="3" value="${r.textSize}" data-p="textSize" data-i="${i}"></div>
+        </div>`;
+    }else if(r.type==="line"){
+      body=`<div class="grid"><div><label>두께mm</label><input type="number" step="0.1" min="0.1" value="${r.th}" data-p="th" data-i="${i}"></div></div>`;
+    }else{
+      body=`<div class="grid"><div><label>높이mm</label><input type="number" step="0.5" min="0.5" value="${r.h}" data-p="h" data-i="${i}"></div></div>`;
+    }
+    return `<div class="rowcard">${head}${body}</div>`;
+  }).join("");
+
+  // 값 바인딩 (구조 재렌더 없이 상태+미리보기만 갱신)
+  $("rowsEd").querySelectorAll("[data-p]").forEach(el=>{
+    el.addEventListener(el.type==="checkbox"||el.tagName==="SELECT"?"change":"input",()=>{
+      const r=cur.rows[+el.dataset.i], p=el.dataset.p;
+      r[p]=el.type==="checkbox"?el.checked:(el.type==="number"?+el.value:el.value);
+      render();
+    });
+  });
+  $("rowsEd").querySelectorAll("[data-tpl]").forEach(el=>{
+    el.addEventListener("input",()=>{ cur.rows[+el.dataset.tpl].tpl=el.value; render(); });
+  });
+}
+
+/* ═══════════ 라벨 렌더링 ═══════════ */
+const FONTS={sans:"'Segoe UI','Malgun Gothic',sans-serif", serif:"'Batang',serif", mono:"Consolas,monospace"};
+function labelHtml(it){
+  const p=cur.paper;
+  const cw=(p.rot?p.lh:p.lw)-p.pad*2;          // 회전 시 콘텐츠 박스 치수 교환
+  let parts="";
+  for(const r of cur.rows){
+    if(r.type==="text"){
+      const cls = r.maxLines===1?"clamp1":(r.maxLines>1?"clampN":"");
+      const extra = r.maxLines>1?`-webkit-line-clamp:${r.maxLines};`:"";
+      parts+=`<div class="t ${cls} ${r.invert?'inv':''}" style="font-size:${r.size}pt;font-weight:${r.bold?700:400};text-align:${r.align};font-family:${FONTS[r.font]};${extra}">${interp(r.tpl,it)||"&nbsp;"}</div>`;
+    }else if(r.type==="barcode"){
+      const data=interp(r.src,it);
+      try{
+        const svg = r.sym==="ean13" ? ean13Svg(data,r.h,cw*0.95) : code128Svg(data,r.h,cw*0.95);
+        parts+=svg;
+        if(r.showText) parts+=`<div class="btxt" style="font-size:${r.textSize}pt">${data}</div>`;
+      }catch(e){
+        parts+=`<div class="err">⚠ ${e.message}</div>`;
+      }
+    }else if(r.type==="line"){
+      parts+=`<div style="width:92%;border-top:${r.th}mm solid #000;margin:.3mm 0"></div>`;
+    }else{
+      parts+=`<div style="height:${r.h}mm;flex:0 0 auto"></div>`;
+    }
+  }
+  const rotStyle = p.rot
+    ? `width:${p.lh-p.pad*2}mm;height:${p.lw-p.pad*2}mm;transform:rotate(90deg) translateY(-100%);transform-origin:top left;position:absolute;left:${p.pad}mm;top:${p.pad}mm;`
+    : `padding:${p.pad}mm;`;
+  return `<div class="lbl" style="width:${p.lw}mm;height:${p.lh}mm"><div class="inner" style="${rotStyle}">${parts}</div></div>`;
+}
+function allLabels(){
+  const out=[];
+  ITEMS.forEach((it,i)=>{
+    const q=+document.querySelector(`#q${i}`).value||0;
+    for(let k=0;k<q;k++) out.push(labelHtml(it));
+  });
+  return out;
+}
+
+/* ═══════════ 시트 배치 + 인쇄 ═══════════ */
+function render(){
+  try{
+    const p=cur.paper, labels=allLabels();
+    let screen="", print="", pageCss="";
+    if(p.kind==="label"){
+      const per=p.cols*p.rows;
+      const gapX=p.cols>1?(210-p.ml*2-p.lw*p.cols)/(p.cols-1):0;
+      const gapY=p.rows>1?(297-p.mt*2-p.lh*p.rows)/(p.rows-1):0;
+      const pages=Math.max(1,Math.ceil(labels.length/per));
+      const sheets=[];
+      for(let pg=0;pg<pages;pg++){
+        let cells="";
+        for(let i=0;i<per;i++){
+          const idx=pg*per+i; if(idx>=labels.length) break;
+          const r=Math.floor(i/p.cols), c=i%p.cols;
+          cells+=`<div style="position:absolute;left:${(p.ml+c*(p.lw+gapX)).toFixed(2)}mm;top:${(p.mt+r*(p.lh+gapY)).toFixed(2)}mm">${labels[idx]}</div>`;
+        }
+        sheets.push(`<div class="sheet" style="width:210mm;height:297mm;position:relative;${pg<pages-1?'break-after:page;':''}">${cells}</div>`);
+      }
+      screen=sheets.map(s=>s.replace('class="sheet"','class="sheet screen-sheet"')).join("");
+      print=sheets.join("");
+      pageCss="@page{size:A4;margin:0;}";
+      $("stageTitle").textContent=`미리보기 — ${cur.paper.maker} ${cur.paper.model||''} · 라벨 ${labels.length}장 / ${pages}페이지 (A4)`;
+    }else{
+      screen=labels.map(l=>`<div class="sheet screen-sheet">${l}</div>`).join("");
+      print=labels.map((l,i)=>`<div class="sheet" style="${i<labels.length-1?'break-after:page;':''}">${l}</div>`).join("");
+      pageCss=`@page{size:${p.lw}mm ${p.lh}mm;margin:0;}`;
+      $("stageTitle").textContent=`미리보기 — ${p.kind==="thermal"?"감열":"사용자 지정"} ${p.lw}×${p.lh}mm · ${labels.length}장 (1장=1페이지)${p.rot?' · 90° 회전':''}`;
+    }
+    $("preview").innerHTML=screen;
+    $("print-root").innerHTML=print;
+    $("page-style").textContent=`@media print{ ${pageCss} }`;
+  }catch(e){
+    $("preview").innerHTML=`<div style="color:#c00">${e.message}</div>`;
+  }
+}
+function doPrint(){ render(); window.print(); }
+
+/* ═══════════ 초기화 ═══════════ */
+$("qtyList").innerHTML=ITEMS.map((it,i)=>`
+  <div class="row" style="align-items:center;">
+    <div style="flex:3"><label style="margin:0;font-size:12px;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${it.상품명영문} <span style="color:var(--sub)">(${it.브랜드})</span></label></div>
+    <div style="flex:0 0 58px"><input type="number" id="q${i}" value="${it.qty}" min="0"></div>
+  </div>`).join("");
+document.querySelectorAll("#qtyList input").forEach(el=>el.addEventListener("input",render));
+
+loadAll(); pickTpl(0);
+</script>
+</body>
+</html>
