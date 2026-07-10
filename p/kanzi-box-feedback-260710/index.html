@@ -91,12 +91,12 @@
     <div class="sub">2026-07-09~10 전 메뉴 실사용 검토 + 재현 테스트 기반. 상세 근거는 각 섹션 참조.</div>
     <div class="cards">
       <div class="card">
-        <div class="h"><span class="badge p1">1순위 · 버그</span><br>엑셀 내보내기 실패</div>
-        <div class="d">생성 ~98초 vs 타임아웃 35~40초 → 503. 대량 수정 업무가 현재 막혀 있음. 쿼리 최적화 요청.</div>
+        <div class="h"><span class="badge p1">1순위 · 기능</span><br>이미지 일괄 등록</div>
+        <div class="d">박스히어로 이미지 1,682개 백업 완료({SKU}.jpg). InvenTree API 토큰만 발급되면 서울쇼룸에서 직접 처리 — 개발 공수 최소.</div>
       </div>
       <div class="card">
-        <div class="h"><span class="badge p2">2순위 · 기능</span><br>이미지 일괄 등록</div>
-        <div class="d">이미지 3,500개({SKU}.jpg) 준비 완료. InvenTree API 토큰만 발급되면 서울쇼룸에서 직접 처리 가능 — 개발 공수 최소.</div>
+        <div class="h"><span class="badge p2">2순위 · 개선</span><br>엑셀 내보내기·양식</div>
+        <div class="d">생성 ~98초로 매우 느리고 간헐 503. 또한 양식에 바코드·가격·링크 등 9개 속성 컬럼 누락 — 대량 수정 시 보존 여부 확인 필요.</div>
       </div>
       <div class="card">
         <div class="h"><span class="badge p3">3순위 · 기능</span><br>바코드 라벨 디자이너</div>
@@ -107,10 +107,10 @@
 
   <!-- 1. 엑셀 내보내기 버그 -->
   <section>
-    <h2><span class="no">1</span>버그: 엑셀 내보내기 다운로드 실패 <span class="badge p1">우선순위 1</span></h2>
+    <h2><span class="no">1</span>개선: 엑셀 내보내기 속도·양식 컬럼 <span class="badge p2">우선순위 2</span></h2>
     <div class="sub">데이터 관리 → 엑셀 내보내기 → 상품목록.xlsx</div>
 
-    <p><b>증상</b> — 버튼 클릭 시 로딩 스피너만 계속 돌고 파일이 다운로드되지 않음. 에러 표시 없음.</p>
+    <p><b>증상</b> — 다운로드가 1~2분가량 걸리고(스피너 장시간), 중간에 실패하는 경우도 있음(테스트 4회 중 2회 503). 실패 시 에러 표시 없이 스피너만 지속.</p>
 
     <h3>재현 결과 (2026-07-10, 4회 테스트)</h3>
     <table>
@@ -129,16 +129,30 @@
     <p>3,485개 상품 × 위치 8곳 재고 조회에 98초 소요 — 이 규모(405KB)면 수 초가 정상이라, 상품별 위치재고를 개별 조회하는 <b>N+1 쿼리 패턴</b>(약 28,000 쿼리)일 가능성이 높습니다.</p>
 
     <div class="call red">
-      <b class="t">요청 사항</b>
+      <b class="t">요청 사항 (속도)</b>
       ① (근본) export 쿼리를 일괄 JOIN/GROUP BY로 — 수 초 내 응답 목표<br>
-      ② (임시) 프록시 read timeout 120초 이상 상향 — 이것만으로도 일단 다운로드 가능<br>
-      ③ (UX) 실패 시 스피너 해제 + "잠시 후 다시 시도" 에러 메시지 표시
+      ② (UX) 실패 시 스피너 해제 + "잠시 후 다시 시도" 에러 메시지 표시<br>
+      ③ (편의) 빈 양식(헤더만) 다운로드 옵션 — 현재는 전 품목 데이터를 지우고 양식으로 사용 중
+    </div>
+
+    <h3>양식 컬럼 누락 — 9개 속성 (2026-07-10 박스히어로 양식 대조)</h3>
+    <p>박스히어로 Items Export(33컬럼)와 대조한 결과, KANZI 양식(24컬럼)에는 속성 20종 중 <b>9종이 빠져 있습니다</b>:</p>
+    <table>
+      <tr><th style="width:280px;">누락 컬럼</th><th>영향</th></tr>
+      <tr class="hl"><td><b>바코드 · 매입가(AUD) · 판매가(AUD)</b></td><td>운영 필수 — 바코드는 KPOS 연동·매장 스캔의 키. 엑셀 신규 등록 시 바코드·가격 없는 상품이 됨</td></tr>
+      <tr><td>TAG 가격 · 썸네일링크 · 상세페이지링크</td><td>택 출력·이미지 연동에 필요</td></tr>
+      <tr><td>소재 · 수수료율 · 무게/용량(g/ml)</td><td>보조 속성</td></tr>
+    </table>
+    <div class="call red">
+      <b class="t">확인·요청 사항 (양식)</b>
+      ① 대량 수정 업로드 시 양식에 없는 9개 속성이 <b>보존되는지(빈값으로 덮어쓰이지 않는지)</b> 확인 — 확인 전까지 대량 수정 보류 중<br>
+      ② 양식에 누락 컬럼 추가 — 최소한 바코드·매입가·판매가는 필수
     </div>
   </section>
 
   <!-- 2. 이미지 일괄 등록 -->
   <section>
-    <h2><span class="no">2</span>기능: 제품 이미지 일괄 등록 <span class="badge p2">우선순위 2</span></h2>
+    <h2><span class="no">2</span>기능: 제품 이미지 일괄 등록 <span class="badge p1">우선순위 1</span></h2>
     <div class="sub">현재 제품목록 3,485개 전체가 이미지 없음(placeholder) 상태</div>
 
     <h3>현황 확인 (3개 경로 모두 확인)</h3>
