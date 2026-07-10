@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<title>FITGRANT — Cursor FX Sampler</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/wanteddev/wanted-sans@v1.0.3/packages/wanted-sans/fonts/webfonts/variable/complete/WantedSansVariable.css">
+<style>
+  :root { --font: 'Wanted Sans Variable', 'Wanted Sans', -apple-system, BlinkMacSystemFont, sans-serif; --accent: #7eb3ff; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 100%; height: 100%; background: #000; overflow: hidden; font-family: var(--font); }
+  .fx-canvas { position: fixed; inset: 0; width: 100%; height: 100%; display: none; }
+  .fx-canvas.on { display: block; }
+
+  #brand {
+    position: fixed; top: 26px; left: 30px; z-index: 20;
+    font-size: 13px; font-weight: 300; letter-spacing: 0.32em;
+    color: var(--accent); text-transform: uppercase;
+    pointer-events: none;
+  }
+  #brand small { display: block; margin-top: 6px; font-size: 10px; letter-spacing: 0.24em; color: rgba(255,255,255,0.35); }
+
+  #fx-info {
+    position: fixed; top: 26px; right: 30px; z-index: 20;
+    text-align: right; pointer-events: none;
+  }
+  #fx-name { font-size: 15px; font-weight: 300; letter-spacing: 0.14em; color: rgba(255,255,255,0.9); text-transform: uppercase; }
+  #fx-src {
+    display: inline-block; margin-top: 8px;
+    font-size: 9.5px; font-weight: 400; letter-spacing: 0.2em; text-transform: uppercase;
+    padding: 4px 12px; border-radius: 999px;
+    border: 1px solid rgba(126,179,255,0.4); color: var(--accent);
+  }
+  #fx-desc { margin-top: 10px; font-size: 11.5px; font-weight: 300; color: rgba(255,255,255,0.45); letter-spacing: 0.04em; max-width: 300px; line-height: 1.7; }
+
+  #hint {
+    position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%);
+    z-index: 15; pointer-events: none;
+    font-size: 11px; letter-spacing: 0.34em; text-transform: uppercase;
+    color: rgba(255,255,255,0.4);
+    animation: pulse 2.2s ease-in-out infinite;
+    transition: opacity 0.6s;
+  }
+  #hint.gone { opacity: 0; }
+  @keyframes pulse { 0%,100% { opacity: 0.35; } 50% { opacity: 0.8; } }
+
+  #bar {
+    position: fixed; bottom: calc(26px + env(safe-area-inset-bottom, 0px)); left: 50%; transform: translateX(-50%);
+    z-index: 30;
+    display: flex; gap: 8px; flex-wrap: wrap; justify-content: center;
+    padding: 8px;
+    background: rgba(10,10,16,0.55);
+    backdrop-filter: blur(14px);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 999px;
+    max-width: calc(100vw - 32px);
+  }
+  .fx-btn {
+    background: none; border: none; cursor: pointer;
+    font-family: var(--font);
+    font-size: 11px; font-weight: 300; letter-spacing: 0.14em; text-transform: uppercase;
+    color: rgba(255,255,255,0.55);
+    padding: 9px 18px; border-radius: 999px;
+    transition: background 0.2s, color 0.2s;
+    white-space: nowrap;
+  }
+  .fx-btn:hover { color: #fff; }
+  .fx-btn.on { background: var(--accent); color: #050508; font-weight: 500; }
+  .fx-btn .num { opacity: 0.5; margin-right: 6px; }
+  .fx-btn.on .num { opacity: 0.7; }
+
+  #keys {
+    position: fixed; bottom: calc(88px + env(safe-area-inset-bottom, 0px)); left: 50%; transform: translateX(-50%);
+    z-index: 20; pointer-events: none;
+    font-size: 9px; letter-spacing: 0.26em; text-transform: uppercase;
+    color: rgba(255,255,255,0.22);
+  }
+  @media (max-width: 720px) {
+    #fx-desc { display: none; }
+    #keys { display: none; }
+    #brand small { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<canvas class="fx-canvas" id="cv-tubes"></canvas>
+<canvas class="fx-canvas" id="cv-neon"></canvas>
+<canvas class="fx-canvas" id="cv-particles"></canvas>
+<canvas class="fx-canvas" id="cv-plexus"></canvas>
+<canvas class="fx-canvas" id="cv-trail"></canvas>
+<canvas class="fx-canvas" id="cv-firefly"></canvas>
+
+<div id="brand">FITGRANT<small>Cursor FX Sampler</small></div>
+<div id="fx-info">
+  <div id="fx-name"></div>
+  <span id="fx-src"></span>
+  <div id="fx-desc"></div>
+</div>
+<div id="hint">Move your cursor</div>
+<div id="keys">1 – 6 키로 전환</div>
+<div id="bar"></div>
+
+<script>
+/* ============================================================
+   커서 이펙트 샘플러
+   - WebGL 3종: threejs-components (오픈소스, 첫 선택 시 lazy 로드)
+   - Canvas2D 3종: 직접 구현 (전환 시 일시정지로 성능 관리)
+   ============================================================ */
+var CDN = 'https://cdn.jsdelivr.net/npm/threejs-components@0.0.19/build/cursors/';
+
+var EFFECTS = [
+  { id: 'tubes',     label: 'Tubes',     src: '오픈소스', desc: '커서를 따라 네온 튜브가 그려지는 효과. seoullabs.io 인트로에 쓰인 바로 그 효과.',
+    type: 'webgl', url: CDN + 'tubes1.min.js',
+    opts: { tubes: { colors: ['#5e72e4', '#8965e0', '#f5365c'], lights: { intensity: 200, colors: ['#21d4fd', '#b721ff', '#f4d03f', '#11cdef'] } } } },
+  { id: 'neon',      label: 'Neon',      src: '오픈소스', desc: '커서 궤적을 따라 흐르는 네온 리본.',
+    type: 'webgl', url: CDN + 'neon1.cdn.min.js', opts: {} },
+  { id: 'particles', label: 'Particles', src: '오픈소스', desc: '커서에 반응하는 3D 파티클 무리.',
+    type: 'webgl', url: CDN + 'particles1.cdn.min.js', opts: {} },
+  { id: 'plexus',    label: 'Plexus',    src: '직접 구현', desc: '떠다니는 점들이 커서 주변에서 선으로 연결되는 별자리(플렉서스) 효과.', type: '2d' },
+  { id: 'trail',     label: 'Glow Trail', src: '직접 구현', desc: '커서를 따라오는 빛나는 잔상 트레일. 색이 천천히 순환.', type: '2d' },
+  { id: 'firefly',   label: 'Fireflies', src: '직접 구현', desc: '커서를 피해 흩어지는 반딧불 파티클. 가까이 가면 밀려나고 다시 모여듦.', type: '2d' }
+];
+
+var state = {};   // id -> { inited, raf, stop() ... }
+var current = null;
+var pointer = { x: innerWidth / 2, y: innerHeight / 2, moved: false };
+
+addEventListener('pointermove', function (e) {
+  pointer.x = e.clientX; pointer.y = e.clientY;
+  if (!pointer.moved) { pointer.moved = true; document.getElementById('hint').classList.add('gone'); }
+});
+
+/* 모바일 터치 → 마우스 이벤트 변환 (WebGL 캔버스용) */
+document.querySelectorAll('.fx-canvas').forEach(function (cv) {
+  cv.addEventListener('touchmove', function (e) {
+    e.preventDefault();
+    var t = e.touches[0];
+    cv.dispatchEvent(new MouseEvent('mousemove', { clientX: t.clientX, clientY: t.clientY, bubbles: true }));
+    pointer.x = t.clientX; pointer.y = t.clientY;
+    document.getElementById('hint').classList.add('gone');
+  }, { passive: false });
+});
+
+/* ── Canvas2D 공통 ── */
+function fit(cv) {
+  var dpr = Math.min(devicePixelRatio || 1, 2);
+  cv.width = innerWidth * dpr; cv.height = innerHeight * dpr;
+  var ctx = cv.getContext('2d');
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  return ctx;
+}
+
+/* ── 04 Plexus ── */
+function initPlexus(cv) {
+  var ctx = fit(cv), pts = [], N = Math.min(110, Math.floor(innerWidth / 12));
+  for (var i = 0; i < N; i++) pts.push({ x: Math.random() * innerWidth, y: Math.random() * innerHeight, vx: (Math.random() - .5) * .45, vy: (Math.random() - .5) * .45 });
+  addEventListener('resize', function () { ctx = fit(cv); });
+  var st = state.plexus;
+  function frame() {
+    ctx.clearRect(0, 0, innerWidth, innerHeight);
+    for (var i = 0; i < N; i++) {
+      var p = pts[i];
+      var dx = pointer.x - p.x, dy = pointer.y - p.y, d = Math.hypot(dx, dy);
+      if (d < 200 && d > 0.01) { p.vx += dx / d * 0.012; p.vy += dy / d * 0.012; }
+      p.vx *= 0.985; p.vy *= 0.985;
+      p.x += p.vx; p.y += p.vy;
+      if (p.x < 0 || p.x > innerWidth) p.vx *= -1;
+      if (p.y < 0 || p.y > innerHeight) p.vy *= -1;
+    }
+    for (var i = 0; i < N; i++) {
+      for (var j = i + 1; j < N; j++) {
+        var a = pts[i], b = pts[j], d2 = Math.hypot(a.x - b.x, a.y - b.y);
+        if (d2 < 110) {
+          ctx.strokeStyle = 'rgba(126,179,255,' + (0.34 * (1 - d2 / 110)).toFixed(3) + ')';
+          ctx.lineWidth = 1;
+          ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+        }
+      }
+      var p = pts[i], dc = Math.hypot(pointer.x - p.x, pointer.y - p.y);
+      if (dc < 170) {
+        ctx.strokeStyle = 'rgba(168,139,255,' + (0.55 * (1 - dc / 170)).toFixed(3) + ')';
+        ctx.lineWidth = 1.2;
+        ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(pointer.x, pointer.y); ctx.stroke();
+      }
+      ctx.fillStyle = 'rgba(220,232,255,0.85)';
+      ctx.beginPath(); ctx.arc(p.x, p.y, 1.6, 0, 7); ctx.fill();
+    }
+    ctx.fillStyle = 'rgba(126,179,255,0.9)';
+    ctx.beginPath(); ctx.arc(pointer.x, pointer.y, 3, 0, 7); ctx.fill();
+    st.raf = requestAnimationFrame(frame);
+  }
+  st.start = function () { if (!st.raf) st.raf = requestAnimationFrame(frame); };
+  st.stopFn = function () { cancelAnimationFrame(st.raf); st.raf = null; };
+}
+
+/* ── 05 Glow Trail ── */
+function initTrail(cv) {
+  var ctx = fit(cv), trail = [], hue = 220, last = { x: pointer.x, y: pointer.y };
+  addEventListener('resize', function () { ctx = fit(cv); });
+  var st = state.trail;
+  function frame() {
+    ctx.fillStyle = 'rgba(0,0,0,0.12)';
+    ctx.fillRect(0, 0, innerWidth, innerHeight);
+    var dx = pointer.x - last.x, dy = pointer.y - last.y, dist = Math.hypot(dx, dy);
+    var steps = Math.max(1, Math.min(24, Math.floor(dist / 4)));
+    for (var s = 1; s <= steps; s++) trail.push({ x: last.x + dx * s / steps, y: last.y + dy * s / steps, life: 1, r: 7 + Math.min(dist, 90) * 0.16 });
+    last.x = pointer.x; last.y = pointer.y;
+    hue = (hue + 0.7) % 360;
+    ctx.globalCompositeOperation = 'lighter';
+    for (var i = trail.length - 1; i >= 0; i--) {
+      var t = trail[i];
+      t.life -= 0.022;
+      if (t.life <= 0) { trail.splice(i, 1); continue; }
+      var g = ctx.createRadialGradient(t.x, t.y, 0, t.x, t.y, t.r * t.life);
+      g.addColorStop(0, 'hsla(' + hue + ',95%,72%,' + (0.5 * t.life).toFixed(3) + ')');
+      g.addColorStop(1, 'hsla(' + ((hue + 60) % 360) + ',95%,60%,0)');
+      ctx.fillStyle = g;
+      ctx.beginPath(); ctx.arc(t.x, t.y, t.r * t.life, 0, 7); ctx.fill();
+    }
+    ctx.globalCompositeOperation = 'source-over';
+    st.raf = requestAnimationFrame(frame);
+  }
+  st.start = function () { if (!st.raf) { last.x = pointer.x; last.y = pointer.y; st.raf = requestAnimationFrame(frame); } };
+  st.stopFn = function () { cancelAnimationFrame(st.raf); st.raf = null; trail.length = 0; ctx.clearRect(0, 0, innerWidth, innerHeight); };
+}
+
+/* ── 06 Fireflies ── */
+function initFirefly(cv) {
+  var ctx = fit(cv), N = Math.min(130, Math.floor(innerWidth / 10)), fl = [];
+  var HUES = [215, 255, 285, 330];
+  for (var i = 0; i < N; i++) fl.push({
+    x: Math.random() * innerWidth, y: Math.random() * innerHeight,
+    hx: Math.random() * innerWidth, hy: Math.random() * innerHeight,
+    vx: 0, vy: 0, r: 1.2 + Math.random() * 2.2,
+    hue: HUES[i % HUES.length], tw: Math.random() * 7, sp: 0.5 + Math.random()
+  });
+  addEventListener('resize', function () { ctx = fit(cv); });
+  var st = state.firefly;
+  function frame(now) {
+    ctx.fillStyle = 'rgba(0,0,0,0.28)';
+    ctx.fillRect(0, 0, innerWidth, innerHeight);
+    ctx.globalCompositeOperation = 'lighter';
+    for (var i = 0; i < N; i++) {
+      var f = fl[i];
+      /* 홈 포인트로 천천히 복귀 + 랜덤 드리프트 */
+      f.vx += (f.hx - f.x) * 0.0006 * f.sp + (Math.random() - .5) * 0.05;
+      f.vy += (f.hy - f.y) * 0.0006 * f.sp + (Math.random() - .5) * 0.05;
+      /* 커서 반발 */
+      var dx = f.x - pointer.x, dy = f.y - pointer.y, d = Math.hypot(dx, dy);
+      if (d < 150 && d > 0.01) { var force = (1 - d / 150) * 1.6; f.vx += dx / d * force; f.vy += dy / d * force; }
+      f.vx *= 0.94; f.vy *= 0.94;
+      f.x += f.vx; f.y += f.vy;
+      var glow = 0.45 + 0.4 * Math.sin(now * 0.002 * f.sp + f.tw);
+      var g = ctx.createRadialGradient(f.x, f.y, 0, f.x, f.y, f.r * 6);
+      g.addColorStop(0, 'hsla(' + f.hue + ',90%,75%,' + glow.toFixed(3) + ')');
+      g.addColorStop(1, 'hsla(' + f.hue + ',90%,60%,0)');
+      ctx.fillStyle = g;
+      ctx.beginPath(); ctx.arc(f.x, f.y, f.r * 6, 0, 7); ctx.fill();
+      ctx.fillStyle = 'hsla(' + f.hue + ',100%,88%,' + glow.toFixed(3) + ')';
+      ctx.beginPath(); ctx.arc(f.x, f.y, f.r, 0, 7); ctx.fill();
+    }
+    ctx.globalCompositeOperation = 'source-over';
+    st.raf = requestAnimationFrame(frame);
+  }
+  st.start = function () { if (!st.raf) st.raf = requestAnimationFrame(frame); };
+  st.stopFn = function () { cancelAnimationFrame(st.raf); st.raf = null; ctx.clearRect(0, 0, innerWidth, innerHeight); };
+}
+
+var INIT_2D = { plexus: initPlexus, trail: initTrail, firefly: initFirefly };
+
+/* ── 전환 로직 ──
+   WebGL 컨텍스트를 여러 개 동시에 살려두면 렌더러가 정체되므로
+   벗어나는 WebGL 효과는 dispose하고 다시 선택 시 재생성한다. */
+function activate(fx) {
+  EFFECTS.forEach(function (e) {
+    document.getElementById('cv-' + e.id).classList.toggle('on', e.id === fx.id);
+    var s = state[e.id];
+    if (!s || e.id === fx.id) return;
+    if (s.stopFn) s.stopFn();
+    if (e.type === 'webgl' && s.app) {
+      try { s.app.dispose(); } catch (err) {}
+      s.app = null; s.inited = false;
+    }
+  });
+  document.querySelectorAll('.fx-btn').forEach(function (b) { b.classList.toggle('on', b.dataset.id === fx.id); });
+  document.getElementById('fx-name').textContent = fx.label;
+  document.getElementById('fx-src').textContent = fx.src;
+  document.getElementById('fx-desc').textContent = fx.desc;
+
+  var s = state[fx.id] = state[fx.id] || {};
+  var cv = document.getElementById('cv-' + fx.id);
+
+  if (fx.type === 'webgl') {
+    if (!s.inited) {
+      s.inited = true;
+      import(fx.url).then(function (m) {
+        var app = m.default(cv, fx.opts);
+        if (current && current.id === fx.id) { s.app = app; }
+        else { try { app.dispose(); } catch (err) {} s.inited = false; }
+      }).catch(function (err) { console.warn(fx.id + ' 로드 실패', err); });
+    }
+  } else {
+    if (!s.inited) { s.inited = true; INIT_2D[fx.id](cv); }
+    s.start();
+  }
+  current = fx;
+}
+
+/* 버튼 바 */
+var bar = document.getElementById('bar');
+EFFECTS.forEach(function (fx, i) {
+  var b = document.createElement('button');
+  b.className = 'fx-btn'; b.dataset.id = fx.id;
+  b.innerHTML = '<span class="num">0' + (i + 1) + '</span>' + fx.label;
+  b.onclick = function () { activate(fx); };
+  bar.appendChild(b);
+});
+addEventListener('keydown', function (e) {
+  var n = parseInt(e.key, 10);
+  if (n >= 1 && n <= EFFECTS.length) activate(EFFECTS[n - 1]);
+});
+
+activate(EFFECTS[0]);
+</script>
+</body>
+</html>
