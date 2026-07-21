@@ -101,7 +101,7 @@
   <p class="eyebrow">KANZI · Retail Data · 경영 보고</p>
   <h1>품목별 매출이 안 잡히는 이유 — <span style="color:var(--accent)">원인 3갈래</span>와 해결방안</h1>
   <p class="lede">호주 5개 매장의 매출 금액은 정확하게 집계되고 있습니다. 그러나 <b>무엇이 팔렸는지</b>는 매출의 93.5%에서 알 수 없습니다. 원인을 세 갈래로 분리해 확정했고, 그중 하나는 이미 해결했습니다.</p>
-  <p class="meta">2026-07-21 작성 · 근거: HQ DB(kpos_kanzi) 전수 실측 + 매장 단말 판매기록 교차검증 + 실물 바코드 스캔 테스트</p>
+  <p class="meta">2026-07-21 작성 · 근거: HQ DB(kpos_kanzi) 전수 실측 + 매장 단말 판매기록 교차검증 + 실물 바코드 스캔 재현 테스트(본사 검증용 사본)</p>
 </header>
 
 <!-- ============ 1 ============ -->
@@ -154,12 +154,13 @@
   <p class="sub">서로 다른 문제이며 해결 주체와 방법이 각각 다릅니다. 하나만 고쳐서는 해결되지 않습니다.</p>
 
   <div class="cause c1">
-    <h3>① 설정 문제 <span class="pill done">원인 확정 · 리드컴 해결 완료 (7/21)</span></h3>
-    <p class="who">담당: 매장 단말 설정 · 비용 없음 · 즉시 적용 가능</p>
+    <h3>① 설정 문제 <span class="pill done">원인 확정 (7/21)</span> <span class="pill doing">전 매장 적용 필요</span></h3>
+    <p class="who">담당: 매장 단말 설정 · 비용 없음 · 매장당 5분 · <b>아직 어느 매장에도 적용되지 않음</b></p>
     <p>K_Pos의 <code>Use Character Barcode</code> 설정이 꺼져 있으면 <b>스캔 입력에서 알파벳을 버리고 숫자만 받습니다.</b> 우리 상품 대부분이 영문·숫자 혼합 SKU 바코드(<code>BRN602WTS019BLK</code> 형태)라, 이 설정이 꺼진 매장에서는 <b>정상 등록된 상품조차 스캔이 안 됩니다.</b> 직원 입장에서는 범용 버튼 외에 선택지가 없습니다.</p>
-    <p><b>실물 스캔으로 직접 확인했습니다.</b> 리드컴 설정에서 영숫자 바코드를 찍으면 숫자 부분만 입력되어 조회에 실패했고, 설정을 켠 뒤 정상 조회됐습니다.</p>
-    <div class="callout">
-      <p><b>조치</b> — 매장 단말에서 <code>Basic Setup ▸ Device Setup ▸ Use Character Barcode</code> 체크 후 저장·재시작. 매장별 로컬 설정이라 본사 원격 배포가 불가능하며 <b>매장마다 각각 적용</b>해야 합니다.</p>
+    <p><b>실물 바코드 스캔으로 직접 재현·검증했습니다.</b> 본사 PC의 리드컴 설정 사본에서 영숫자 바코드를 찍으면 숫자 부분만 입력되어 조회에 실패했고, 설정을 켠 뒤 즉시 정상 조회됐습니다. 원인과 해법이 모두 확정된 상태입니다.</p>
+    <div class="callout warn">
+      <p><b>조치 — 아직 실행되지 않았습니다.</b> 매장 단말에서 <code>Basic Setup ▸ Device Setup ▸ Use Character Barcode</code> 체크 후 저장·재시작이 필요합니다. 검증은 본사 사본으로 한 것이므로 <b>실제 매장 단말은 여전히 그대로</b>입니다.</p>
+      <p>매장별 로컬 설정이라 본사에서 원격 배포가 불가능하며 <b>매장마다 각각 적용</b>해야 합니다. 비용이 들지 않고 5분이면 끝나므로 <b>가장 먼저 실행할 항목</b>입니다.</p>
     </div>
   </div>
 
@@ -195,7 +196,7 @@
       <tbody>
         <tr><td class="k">02 Strathfield</td><td class="num">$30,773</td><td class="num">$8,001</td><td class="num">26.0%</td><td><span class="pill done">정상 추정</span><span class="note">7월 영숫자 판매 59건</span></td></tr>
         <tr><td class="k">03 Burwood</td><td class="num">$44,737</td><td class="num">$0</td><td class="num">0.0%</td><td><span class="pill done">켜져 있음(확인)</span><span class="note">설정은 정상, 습관 문제</span></td></tr>
-        <tr><td class="k">04 Lidcombe</td><td class="num">$33,134</td><td class="num">$1,572</td><td class="num">4.7%</td><td><span class="pill done">7/21 수정 완료</span><span class="note">꺼져 있던 것 확인·해결</span></td></tr>
+        <tr><td class="k">04 Lidcombe</td><td class="num">$33,134</td><td class="num">$1,572</td><td class="num">4.7%</td><td><span class="pill bad">꺼짐 확인 · 적용 대기</span><span class="note">원인 규명된 매장 — 매장 단말 적용 필요</span></td></tr>
         <tr><td class="k">06 Cabramatta</td><td class="num">$30,580</td><td class="num">$0</td><td class="num">0.0%</td><td><span class="pill bad">점검 필요</span><span class="note">영숫자 판매 0건 — 꺼짐 의심</span></td></tr>
         <tr><td class="k">07 Bankstown</td><td class="num">$7,265</td><td class="num">$0</td><td class="num">0.0%</td><td><span class="pill bad">점검 필요</span><span class="note">영숫자 판매 0건 — 꺼짐 의심</span></td></tr>
       </tbody>
@@ -266,7 +267,7 @@
           <td>전 매장 <code>Use Character Barcode</code> 점검·활성화<span class="note">06·07 우선, 02 확인</span></td>
           <td>매장 매니저</td>
           <td>무료 · 매장당 5분</td>
-          <td><span class="pill doing">리드컴 완료</span></td>
+          <td><span class="pill todo">전 매장 미적용</span></td>
         </tr>
         <tr>
           <td class="k">2</td>
@@ -300,7 +301,8 @@
 
 <footer>
   KANZI 호주 리테일 · 2026-07-21 작성<br>
-  근거 데이터: HQ 운영 DB(kpos_kanzi) 판매라인 전수 조회, 2026-07-01 ~ 07-21 · 매장 단말 판매기록 및 상품 로그 교차검증 · 버우드·리드컴 실물 바코드 스캔 테스트<br>
+  근거 데이터: HQ 운영 DB(kpos_kanzi) 판매라인 전수 조회, 2026-07-01 ~ 07-21 · 매장 단말 판매기록 및 상품 로그 교차검증 · 실물 바코드 스캔 재현 테스트<br>
+  <span style="color:var(--warn)">검증 범위 주의</span> — 스캔 테스트는 <b>본사 PC의 매장 설정 사본</b>으로 수행했습니다. 이 사본은 매장 로컬 DB가 아닌 HQ 운영 DB에 접속하므로, <b>원인 ①의 재현·해결은 검증되었으나 원인 ②(매장 로컬 배포)는 사본으로 재현·확인할 수 없습니다.</b> 원인 ②의 해소 여부는 매장 단말에서만 판정 가능합니다 (2026-07-21 기준 미해소: 20접두 102개 중 100개가 배포 이력 없음).<br>
   관련 문서: <a href="../kpos-barcode-status/">POS 바코드 스캔 문제 현황</a> · <a href="../barcode-rule-report/">바코드 규칙 비교 보고서</a> · <a href="../kpos-barcode-test-guide/">매장 테스트 절차서</a>
 </footer>
 
