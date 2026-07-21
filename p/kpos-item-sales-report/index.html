@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow,noarchive"></head><body>
+<title>품목별 매출이 안 잡히는 이유 — 원인 3갈래와 해결방안</title>
+<style>
+  :root{
+    --paper:#FFFFFF;
+    --ink:#0E1526;
+    --muted:#6B7688;
+    --line:#E8ECF3;
+    --accent:#2657E8;
+    --accent-soft:#EEF3FE;
+    --fail:#D14343;
+    --fail-soft:#FDEFEF;
+    --warn:#B45309;
+    --warn-soft:#FFF6E6;
+    --ok:#1F7A4D;
+    --ok-soft:#EAF6EF;
+    --code-bg:#F1F4F9;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;background:var(--paper);color:var(--ink);
+    font-family:"Pretendard","Malgun Gothic","맑은 고딕",-apple-system,"Segoe UI",sans-serif;
+    line-height:1.68;font-size:15px;
+  }
+  .wrap{max-width:880px;margin:0 auto;padding:0 24px 80px;}
+  header{padding:38px 0 26px;border-bottom:1px solid var(--line);}
+  .back{margin:24px 0 0;font-size:13px;font-weight:700;}
+  .back a{color:var(--accent);text-decoration:none;}
+  .eyebrow{font-size:12px;font-weight:700;letter-spacing:.2em;color:var(--muted);text-transform:uppercase;margin:0 0 10px;}
+  h1{font-size:29px;line-height:1.32;margin:0 0 10px;text-wrap:balance;font-weight:800;letter-spacing:-.02em;}
+  .lede{color:var(--muted);margin:0;max-width:64ch;}
+  .meta{font-size:12.5px;color:var(--muted);margin-top:14px;}
+
+  section{margin-top:46px;}
+  h2{font-size:20px;font-weight:800;margin:0 0 4px;display:flex;align-items:center;gap:10px;}
+  h2 .sec-no{
+    flex:none;background:var(--ink);color:#fff;font-size:12px;font-weight:800;
+    letter-spacing:.06em;padding:4px 12px;border-radius:20px;
+  }
+  .sub{color:var(--muted);font-size:13.5px;margin:4px 0 18px;}
+  h3{font-size:16px;font-weight:800;margin:26px 0 10px;}
+
+  code,.bc{
+    font-family:Consolas,"Cascadia Mono",monospace;font-variant-numeric:tabular-nums;
+    background:var(--code-bg);padding:1px 7px;border-radius:4px;font-size:13px;
+  }
+
+  .pill{display:inline-block;padding:2px 11px;border-radius:20px;font-size:12px;font-weight:800;white-space:nowrap;}
+  .pill.done{background:var(--ok-soft);color:var(--ok);}
+  .pill.doing{background:var(--warn-soft);color:var(--warn);}
+  .pill.todo{background:#EDF0F5;color:var(--muted);}
+  .pill.bad{background:var(--fail-soft);color:var(--fail);}
+  .pill.info{background:var(--accent-soft);color:var(--accent);}
+
+  .tbl-scroll{overflow-x:auto;border:1px solid var(--line);border-radius:14px;background:#fff;margin-top:12px;}
+  table{width:100%;border-collapse:collapse;font-size:13.5px;min-width:600px;}
+  th,td{padding:11px 14px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top;}
+  tr:last-child td{border-bottom:none;}
+  thead th{background:var(--ink);color:#fff;font-size:12.5px;}
+  td.k{font-weight:700;white-space:nowrap;background:#FAFBFD;}
+  td.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap;}
+  td .note{display:block;font-size:12.5px;color:var(--muted);margin-top:3px;}
+
+  .callout{margin-top:14px;padding:14px 18px;border-left:4px solid var(--accent);background:var(--accent-soft);border-radius:0 8px 8px 0;font-size:14px;}
+  .callout.warn{border-left-color:var(--warn);background:var(--warn-soft);}
+  .callout.bad{border-left-color:var(--fail);background:var(--fail-soft);}
+  .callout p{margin:0;}
+  .callout p + p{margin-top:8px;}
+
+  .ev{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-top:14px;}
+  .ev-card{border:1px solid var(--line);border-radius:14px;background:#fff;padding:16px 18px;}
+  .ev-card .num{font-family:Consolas,monospace;font-variant-numeric:tabular-nums;font-size:26px;font-weight:700;line-height:1.2;}
+  .ev-card .num.bad{color:var(--fail);}
+  .ev-card .num.good{color:var(--ok);}
+  .ev-card .num.accent{color:var(--accent);}
+  .ev-card .cap{font-size:13px;color:var(--muted);margin-top:4px;}
+
+  .cause{border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin-top:14px;background:#fff;}
+  .cause.c1{border-left:5px solid var(--ok);}
+  .cause.c2{border-left:5px solid var(--warn);}
+  .cause.c3{border-left:5px solid var(--fail);}
+  .cause h3{margin:0 0 6px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:17px;}
+  .cause .who{font-size:12.5px;color:var(--muted);margin:0 0 10px;}
+  .cause p{margin:8px 0 0;font-size:14.2px;}
+
+  .myth{border:1px solid var(--line);border-radius:14px;background:#fff;padding:18px 20px;margin-top:12px;}
+  .myth .q{font-weight:800;font-size:15px;margin:0 0 6px;}
+  .myth .q::before{content:"✕ ";color:var(--fail);font-weight:800;}
+  .myth .a{margin:0;font-size:14.2px;}
+  .myth .a b{color:var(--accent);}
+
+  footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);font-size:12.5px;color:var(--muted);}
+  footer a{color:var(--accent);}
+</style>
+
+<div class="wrap">
+
+<p class="back"><a href="../../">← 공유 문서</a></p>
+<header>
+  <p class="eyebrow">KANZI · Retail Data · 경영 보고</p>
+  <h1>품목별 매출이 안 잡히는 이유 — <span style="color:var(--accent)">원인 3갈래</span>와 해결방안</h1>
+  <p class="lede">호주 5개 매장의 매출 금액은 정확하게 집계되고 있습니다. 그러나 <b>무엇이 팔렸는지</b>는 매출의 93.5%에서 알 수 없습니다. 원인을 세 갈래로 분리해 확정했고, 그중 하나는 이미 해결했습니다.</p>
+  <p class="meta">2026-07-21 작성 · 근거: HQ DB(kpos_kanzi) 전수 실측 + 매장 단말 판매기록 교차검증 + 실물 바코드 스캔 테스트</p>
+</header>
+
+<!-- ============ 1 ============ -->
+<section>
+  <h2><span class="sec-no">1</span>지금 상황</h2>
+  <p class="sub">2026년 7월 1일 ~ 7월 21일, 전 매장 상품 판매라인 기준 (테스트 기록 제외)</p>
+
+  <div class="ev">
+    <div class="ev-card">
+      <div class="num">$146,310</div>
+      <div class="cap">7월 상품 판매액 (금액은 정확)</div>
+    </div>
+    <div class="ev-card">
+      <div class="num bad">93.5%</div>
+      <div class="cap">품목을 알 수 없는 매출</div>
+    </div>
+    <div class="ev-card">
+      <div class="num good">6.5%</div>
+      <div class="cap">품목·브랜드 식별 가능 ($9,573)</div>
+    </div>
+  </div>
+
+  <div class="callout">
+    <p><b>매출 금액과 결산에는 문제가 없습니다.</b> 영수증 단위 실결제액은 100% 정확히 기록됩니다. 문제는 그 매출이 <b>어떤 상품에서 나왔는지</b>를 알 수 없다는 것입니다.</p>
+    <p>그 결과 브랜드별 판매 실적, 품목별 회전율, 실마진 분석, 재고 연동이 전부 불가능합니다. 어떤 브랜드를 더 들여올지, 어떤 재고를 정리할지를 <b>데이터가 아니라 감으로 판단</b>하고 있는 상태입니다.</p>
+  </div>
+
+  <h3>왜 이런 일이 생기는가</h3>
+  <p>매장에서 옷의 바코드를 스캔하는 대신, POS 화면의 <b>범용 버튼</b>(<code>TOP</code>, <code>JACKET</code>, <code>OPS</code>, <code>SKIRT/PANTS</code>)을 누르고 가격을 손으로 입력해 결제합니다. 금액은 정확히 남지만 품목 정보는 어디에도 기록되지 않습니다.</p>
+
+  <div class="tbl-scroll">
+    <table>
+      <thead><tr><th>범용 버튼</th><th>매장</th><th class="num">7월 판매</th><th class="num">매출</th><th class="num">입력된 단가 범위</th></tr></thead>
+      <tbody>
+        <tr><td class="k">TOP</td><td>버우드</td><td class="num">183건</td><td class="num">$13,564</td><td class="num">$1.10 ~ $450.00</td></tr>
+        <tr><td class="k">OUTER</td><td>버우드</td><td class="num">93건</td><td class="num">$10,235</td><td class="num">$0 ~ $369.00</td></tr>
+        <tr><td class="k">KANZI TOP</td><td>카브라마타</td><td class="num">140건</td><td class="num">$9,509</td><td class="num">$1.75 ~ $179.00</td></tr>
+        <tr><td class="k">JACKET</td><td>카브라마타</td><td class="num">57건</td><td class="num">$8,212</td><td class="num">$65.00 ~ $399.00</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="callout warn">
+    <p><b>단가 범위가 증거입니다.</b> 버우드의 <code>TOP</code> 버튼 하나로 183번이 팔렸는데 단가가 $1.10부터 $450까지입니다. 실제 상품이라면 있을 수 없습니다. 서로 다른 수백 개의 옷이 <b>이름 없는 하나의 버튼</b>으로 뭉쳐 있습니다.</p>
+  </div>
+</section>
+
+<!-- ============ 2 ============ -->
+<section>
+  <h2><span class="sec-no">2</span>원인 3갈래</h2>
+  <p class="sub">서로 다른 문제이며 해결 주체와 방법이 각각 다릅니다. 하나만 고쳐서는 해결되지 않습니다.</p>
+
+  <div class="cause c1">
+    <h3>① 설정 문제 <span class="pill done">원인 확정 · 리드컴 해결 완료 (7/21)</span></h3>
+    <p class="who">담당: 매장 단말 설정 · 비용 없음 · 즉시 적용 가능</p>
+    <p>K_Pos의 <code>Use Character Barcode</code> 설정이 꺼져 있으면 <b>스캔 입력에서 알파벳을 버리고 숫자만 받습니다.</b> 우리 상품 대부분이 영문·숫자 혼합 SKU 바코드(<code>BRN602WTS019BLK</code> 형태)라, 이 설정이 꺼진 매장에서는 <b>정상 등록된 상품조차 스캔이 안 됩니다.</b> 직원 입장에서는 범용 버튼 외에 선택지가 없습니다.</p>
+    <p><b>실물 스캔으로 직접 확인했습니다.</b> 리드컴 설정에서 영숫자 바코드를 찍으면 숫자 부분만 입력되어 조회에 실패했고, 설정을 켠 뒤 정상 조회됐습니다.</p>
+    <div class="callout">
+      <p><b>조치</b> — 매장 단말에서 <code>Basic Setup ▸ Device Setup ▸ Use Character Barcode</code> 체크 후 저장·재시작. 매장별 로컬 설정이라 본사 원격 배포가 불가능하며 <b>매장마다 각각 적용</b>해야 합니다.</p>
+    </div>
+  </div>
+
+  <div class="cause c2">
+    <h3>② 데이터 배포 문제 <span class="pill doing">원인 확정 (7/14) · 조치 대기</span></h3>
+    <p class="who">담당: KPOS 개발사(박실장) · 본사 조치 불가 영역</p>
+    <p>2026년 6월부터 발행한 <b>20으로 시작하는 신규 바코드 102개</b>가 리드컴 매장 단말의 상품목록에 내려가지 않았습니다. 본사 DB에는 정상 등록돼 있고 버우드에서는 전부 스캔되지만, 리드컴에서는 품목에 따라 되는 것과 안 되는 것이 갈립니다.</p>
+    <p>단말에서 해당 상품을 한 번 열어 저장하면 그때부터 스캔이 되는 것이 확인됐습니다. 즉 <b>일괄 배포가 누락된 것</b>이지 바코드나 장비 문제가 아닙니다.</p>
+    <div class="callout warn">
+      <p><b>요청 사항</b> — 리드컴 단말 상품목록 전체 재다운로드(풀싱크) 또는 해당 배치 재배포. 상세 근거는 <a href="../kpos-barcode-status/">POS 바코드 스캔 문제 현황 문서</a> 참조.</p>
+    </div>
+  </div>
+
+  <div class="cause c3">
+    <h3>③ 운영 습관 <span class="pill bad">가장 큰 요인 · 미해결</span></h3>
+    <p class="who">담당: 매장 운영·교육 · 시스템으로 해결 불가</p>
+    <p>범용 버튼 결제는 <b>2022년부터 이어진 관행</b>입니다. 버튼 상품의 등록일이 2022년 11월, 2023년 6월로 확인됩니다. ①·②번 문제가 생기기 훨씬 전부터 있었습니다.</p>
+    <p><b>버우드가 이를 증명합니다.</b> 버우드는 ①번 설정이 켜져 있어 영숫자 바코드를 스캔할 수 있는데도, 7월 브랜드 식별률이 <b>0%</b>입니다. 찍을 수 있는데 안 찍는 것입니다.</p>
+    <div class="callout bad">
+      <p><b>①·②를 모두 해결해도 이 문제가 남습니다.</b> 매장 교육과 운영 기준 수립 없이는 품목별 매출 데이터를 확보할 수 없습니다.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 3 ============ -->
+<section>
+  <h2><span class="sec-no">3</span>매장별 현황</h2>
+  <p class="sub">2026년 7월 1~21일 · 브랜드 식별률 = 어떤 상품인지 알 수 있는 매출의 비중</p>
+
+  <div class="tbl-scroll">
+    <table>
+      <thead><tr><th>매장</th><th class="num">7월 매출</th><th class="num">식별 가능</th><th class="num">식별률</th><th>영숫자 스캔 설정</th></tr></thead>
+      <tbody>
+        <tr><td class="k">02 Strathfield</td><td class="num">$30,773</td><td class="num">$8,001</td><td class="num">26.0%</td><td><span class="pill done">정상 추정</span><span class="note">7월 영숫자 판매 59건</span></td></tr>
+        <tr><td class="k">03 Burwood</td><td class="num">$44,737</td><td class="num">$0</td><td class="num">0.0%</td><td><span class="pill done">켜져 있음(확인)</span><span class="note">설정은 정상, 습관 문제</span></td></tr>
+        <tr><td class="k">04 Lidcombe</td><td class="num">$33,134</td><td class="num">$1,572</td><td class="num">4.7%</td><td><span class="pill done">7/21 수정 완료</span><span class="note">꺼져 있던 것 확인·해결</span></td></tr>
+        <tr><td class="k">06 Cabramatta</td><td class="num">$30,580</td><td class="num">$0</td><td class="num">0.0%</td><td><span class="pill bad">점검 필요</span><span class="note">영숫자 판매 0건 — 꺼짐 의심</span></td></tr>
+        <tr><td class="k">07 Bankstown</td><td class="num">$7,265</td><td class="num">$0</td><td class="num">0.0%</td><td><span class="pill bad">점검 필요</span><span class="note">영숫자 판매 0건 — 꺼짐 의심</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="callout">
+    <p><b>06 카브라마타와 07 뱅스타운은 설정 점검이 필요합니다.</b> 두 매장 모두 7월 내내 영숫자 바코드 판매가 한 건도 없어, 리드컴과 같은 상태일 가능성이 높습니다.</p>
+  </div>
+</section>
+
+<!-- ============ 4 ============ -->
+<section>
+  <h2><span class="sec-no">4</span>흔한 오해 정정</h2>
+  <p class="sub">내부 논의에서 반복적으로 나온 잘못된 전제들 — 그대로 두면 엉뚱한 곳에 자원이 투입됩니다</p>
+
+  <div class="myth">
+    <p class="q">"30으로 시작하는 바코드는 가짜(가상) 바코드다"</p>
+    <p class="a"><b>아닙니다.</b> 30접두는 KPOS가 상품 등록 시 발급하는 정규 일련번호이며 <b>실제 개별 상품에도 똑같이 붙습니다.</b> 예를 들어 <code>3026051320123</code>은 "Centella Hyalu-Cica Water-Fit Sun Serum 50ml"라는 단일 품목이고 단품 조회가 됩니다. 판별 기준은 접두번호가 아니라 <b>그 바코드가 하나의 품목을 가리키는지</b>입니다.</p>
+  </div>
+
+  <div class="myth">
+    <p class="q">"20접두 바코드가 안 찍혀서 범용 버튼을 쓴다"</p>
+    <p class="a"><b>인과관계가 성립하지 않습니다.</b> 20접두 바코드는 2026년 6월 9일에 처음 발행됐고 품목도 102개뿐입니다. 그런데 범용 버튼 비중은 <b>그보다 1년 전부터 이미 96~98%</b>였습니다 (2025-06 96.7% · 2025-12 96.3% · 2026-05 98.2%). 20접두 문제를 100% 해결해도 품목별 조회율은 거의 오르지 않습니다.</p>
+  </div>
+
+  <div class="myth">
+    <p class="q">"매장 스캐너가 고장 났거나 성능이 나쁘다"</p>
+    <p class="a"><b>매장 기록이 반증합니다.</b> 리드컴 단말에서 20접두 바코드 4종이 이미 정상 조회됐습니다 (7/12 Loop Tie Blouse 판매 완료, 7/13 Tencel Turtleneck, 7/16 3종 연속). 같은 스캐너로 어떤 것은 되고 어떤 것은 안 됩니다. 스캐너는 바코드에 담긴 숫자가 무엇인지 알지 못하므로 <b>특정 상품만 골라 실패시키는 것은 불가능</b>합니다. 또한 오류 메시지가 "not registered in the product lists"로, 읽기 실패가 아니라 <b>조회 실패</b>를 뜻합니다.</p>
+  </div>
+</section>
+
+<!-- ============ 5 ============ -->
+<section>
+  <h2><span class="sec-no">5</span>해결 시 얻는 것</h2>
+  <p class="sub">바코드로 품목을 지정해 판매하면 그 바코드가 그대로 기록되어 아래 분석이 가능해집니다</p>
+
+  <p>실제로 7월에 영숫자 SKU로 판매된 건들은 이미 이 수준까지 조회됩니다.</p>
+
+  <div class="tbl-scroll">
+    <table>
+      <thead><tr><th>품목</th><th>브랜드</th><th class="num">구매가</th><th class="num">매출</th><th class="num">마진</th></tr></thead>
+      <tbody>
+        <tr><td class="k">Fur Duck Down Short Padded Jumper</td><td>오조크</td><td class="num">$79.65</td><td class="num">$341.10</td><td class="num">$261.45</td></tr>
+        <tr><td class="k">Vintage Plaid Shirt Dress Knit Shawl Set</td><td>CIELO</td><td class="num">$35.88</td><td class="num">$244.00</td><td class="num">$172.24</td></tr>
+        <tr><td class="k">Max Ghibling Cashmere Handmade Half Coat</td><td>muzzfamme</td><td class="num">$150.00</td><td class="num">$230.30</td><td class="num">$80.30</td></tr>
+        <tr><td class="k">Shawl Collar Handmade Long Coat</td><td>muzzfamme</td><td class="num">$130.00</td><td class="num">$220.00</td><td class="num">$90.00</td></tr>
+        <tr><td class="k">PL에펠원피스</td><td>칸지</td><td class="num">$36.30</td><td class="num">$199.00</td><td class="num">$162.70</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout warn">
+    <p><b>단, 소급은 되지 않습니다.</b> 이미 범용 버튼으로 판매된 매출은 복구할 방법이 없습니다. 조치가 늦어질수록 되돌릴 수 없는 데이터 공백이 계속 쌓입니다.</p>
+  </div>
+</section>
+
+<!-- ============ 6 ============ -->
+<section>
+  <h2><span class="sec-no">6</span>조치 계획</h2>
+  <p class="sub">우선순위 순</p>
+
+  <div class="tbl-scroll">
+    <table>
+      <thead><tr><th>순위</th><th>조치</th><th>담당</th><th>비용·기간</th><th>상태</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="k">1</td>
+          <td>전 매장 <code>Use Character Barcode</code> 점검·활성화<span class="note">06·07 우선, 02 확인</span></td>
+          <td>매장 매니저</td>
+          <td>무료 · 매장당 5분</td>
+          <td><span class="pill doing">리드컴 완료</span></td>
+        </tr>
+        <tr>
+          <td class="k">2</td>
+          <td>리드컴 단말 상품목록 풀싱크<span class="note">20접두 102개 배포 누락 해소</span></td>
+          <td>KPOS 박실장</td>
+          <td>본사 조치 불가</td>
+          <td><span class="pill doing">요청 중</span></td>
+        </tr>
+        <tr>
+          <td class="k">3</td>
+          <td>매장 스캔 결제 교육 및 운영 기준 수립<span class="note">범용 버튼 사용 축소 — 가장 큰 효과</span></td>
+          <td>운영 총괄</td>
+          <td>지속 관리 필요</td>
+          <td><span class="pill todo">미착수</span></td>
+        </tr>
+        <tr>
+          <td class="k">4</td>
+          <td>상품 마스터 브랜드·구매가 보완<span class="note">마진 분석까지 열려면 필요</span></td>
+          <td>본사 데이터</td>
+          <td>내부 처리 가능</td>
+          <td><span class="pill todo">대기</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout">
+    <p><b>1번과 2번은 시스템 문제라 조치하면 바로 해결됩니다.</b> 그러나 실질적인 개선폭은 <b>3번에 달려 있습니다.</b> 버우드는 설정이 이미 정상인데도 식별률이 0%입니다. 시스템을 아무리 고쳐도 매장에서 바코드를 찍지 않으면 데이터는 생기지 않습니다.</p>
+  </div>
+</section>
+
+<footer>
+  KANZI 호주 리테일 · 2026-07-21 작성<br>
+  근거 데이터: HQ 운영 DB(kpos_kanzi) 판매라인 전수 조회, 2026-07-01 ~ 07-21 · 매장 단말 판매기록 및 상품 로그 교차검증 · 버우드·리드컴 실물 바코드 스캔 테스트<br>
+  관련 문서: <a href="../kpos-barcode-status/">POS 바코드 스캔 문제 현황</a> · <a href="../barcode-rule-report/">바코드 규칙 비교 보고서</a> · <a href="../kpos-barcode-test-guide/">매장 테스트 절차서</a>
+</footer>
+
+</div>
+</body></html>
