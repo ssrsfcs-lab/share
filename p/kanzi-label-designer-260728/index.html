@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"><meta name="robots" content="noindex,nofollow,noarchive">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>바코드 라벨 디자이너 개선 — 배포 요청 (2026-07-28)</title>
+<style>
+  :root{
+    --ink:#0E1526; --sub:#6B7688; --line:#E8ECF3; --bg:#F7F9FC;
+    --accent:#2657E8; --accent-soft:#EEF3FE;
+    --red:#D14343; --red-soft:#FDEFEF;
+    --amber:#B45309; --amber-soft:#FFF6E6;
+    --green:#15803d; --green-soft:#eefaf1;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{font-family:"Pretendard","SUIT","Malgun Gothic","맑은 고딕",-apple-system,"Segoe UI",sans-serif; background:var(--bg); color:var(--ink); line-height:1.65; font-size:14px;}
+  .page{max-width:860px; margin:0 auto; padding:36px 20px 80px;}
+
+  .back{margin:0 0 14px; font-size:13px; font-weight:700;}
+  .back a{color:var(--accent); text-decoration:none;}
+  .cover{background:#fff; border:1px solid var(--line); border-radius:16px; padding:34px 38px; margin-bottom:22px; border-top:5px solid var(--accent);}
+  .cover .kicker{font-size:12px; font-weight:700; color:var(--sub); letter-spacing:.2em; text-transform:uppercase; margin-bottom:8px;}
+  .cover h1{font-size:26px; line-height:1.35; margin-bottom:12px; font-weight:800; letter-spacing:-.02em;}
+  .cover .meta{font-size:12.5px; color:var(--sub);}
+  .cover .meta span{margin-right:16px;}
+
+  section{background:#fff; border:1px solid var(--line); border-radius:16px; padding:28px 34px; margin-bottom:22px;}
+  h2{font-size:18px; margin-bottom:4px; display:flex; align-items:center; gap:10px;}
+  h2 .no{display:inline-flex; align-items:center; justify-content:center; width:26px; height:26px; border-radius:8px; background:var(--accent); color:#fff; font-size:14px; flex:0 0 auto;}
+  .sub{font-size:12.5px; color:var(--sub); margin-bottom:16px;}
+  h3{font-size:14.5px; margin:20px 0 8px;}
+  p{margin-bottom:10px;}
+  ul,ol{margin:0 0 12px 20px;}
+  li{margin-bottom:5px;}
+  code{font-family:Consolas,monospace; font-size:12.5px; background:#f1f2f6; border-radius:4px; padding:1px 5px;}
+  b{font-weight:700;}
+
+  .badge{display:inline-block; font-size:11px; font-weight:700; padding:3px 10px; border-radius:20px; vertical-align:middle;}
+  .badge.p1{background:var(--red-soft); color:var(--red);}
+  .badge.p2{background:var(--amber-soft); color:var(--amber);}
+  .badge.p3{background:var(--accent-soft); color:var(--accent);}
+  .badge.ok{background:var(--green-soft); color:var(--green);}
+
+  table{width:100%; border-collapse:collapse; margin:10px 0 14px; font-size:13px;}
+  th{background:#F7F9FC; text-align:left; font-size:12px; color:var(--sub); letter-spacing:.3px;}
+  th,td{border:1px solid var(--line); padding:8px 11px; vertical-align:top;}
+  tr.hl td{background:var(--accent-soft);}
+
+  .call{border-radius:10px; padding:13px 16px; margin:12px 0; font-size:13px;}
+  .call.red{background:var(--red-soft); border:1px solid #F2C9C9;}
+  .call.green{background:var(--green-soft); border:1px solid #cdeeda;}
+  .call.blue{background:var(--accent-soft); border:1px solid #D4E0FB;}
+  .call.amber{background:var(--amber-soft); border:1px solid #F3DFB8;}
+  .call b.t{display:block; margin-bottom:4px;}
+
+  .cards{display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin:6px 0 4px;}
+  .card{border:1px solid var(--line); border-radius:12px; padding:15px 16px;}
+  .card .h{font-size:13px; font-weight:700; margin-bottom:5px;}
+  .card .d{font-size:12px; color:var(--sub); line-height:1.55;}
+  @media (max-width:700px){ .cards{grid-template-columns:1fr;} }
+
+  .cta{display:inline-block; background:var(--accent); color:#fff; text-decoration:none; font-weight:700; font-size:14px; padding:12px 22px; border-radius:10px; margin:4px 0 2px;}
+  .cta.ghost{background:#fff; color:var(--accent); border:1.5px solid var(--accent);}
+  pre{background:#0E1526; color:#E8ECF3; border-radius:10px; padding:14px 16px; overflow-x:auto; font-family:Consolas,monospace; font-size:12.5px; line-height:1.6; margin:10px 0 14px;}
+  pre code{background:none; color:inherit; padding:0; font-size:inherit;}
+
+  footer{font-size:11.5px; color:var(--sub); text-align:center; margin-top:8px;}
+
+  @media print{
+    body{background:#fff;}
+    .page{padding:0; max-width:none;}
+    section,.cover{border-radius:0; border-left:none; border-right:none; page-break-inside:avoid;}
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <p class="back"><a href="../../">← 공유 문서</a></p>
+
+  <div class="cover">
+    <div class="kicker">KANZI BOX 개선 · 배포 요청</div>
+    <h1>바코드 라벨 디자이너 개선<br><span style="font-size:16px; color:var(--sub); font-weight:400;">정렬·크기 조절 6종 + 인쇄수량 관리 · 쏠림 버그 1건 수정</span></h1>
+    <div class="meta">
+      <span><b>작성일</b> 2026-07-28</span>
+      <span><b>작성</b> 양종진 (서울쇼룸)</span>
+      <span><b>수신</b> 박건후 실장</span>
+      <span><b>브랜치</b> feature/label-align</span>
+    </div>
+  </div>
+
+  <!-- 요약 -->
+  <section>
+    <h2>요약</h2>
+    <div class="sub">매장 택 출력 실무에서 필요했던 조절 기능을 추가했습니다. <b>수정 파일은 <code>static/index.html</code> 하나뿐</b>이고 백엔드·DB 변경은 없습니다.</div>
+    <div class="cards">
+      <div class="card">
+        <div class="h"><span class="badge ok">완료</span><br>정렬·크기 조절 6종</div>
+        <div class="d">바코드/QR 좌·중·우 정렬, 바코드 폭(%), 라벨 여백·행간격·세로정렬(mm), 행별 간격, 하단 숫자 크기·굵게</div>
+      </div>
+      <div class="card">
+        <div class="h"><span class="badge ok">완료</span><br>제품별 인쇄 수량</div>
+        <div class="d">같은 제품을 중복 추가하던 방식 → 수량 입력칸으로 관리. 박스히어로와 동일한 흐름</div>
+      </div>
+      <div class="card">
+        <div class="h"><span class="badge p1">버그 수정</span><br>바코드 왼쪽 쏠림</div>
+        <div class="d">폭 지정 시 가운데 정렬이 적용되지 않던 문제. 좌우 여백 픽셀 대칭 확인</div>
+      </div>
+    </div>
+    <div class="call blue" style="margin-top:16px;">
+      <b class="t">먼저 직접 만져보실 수 있습니다</b>
+      아래 데모는 서버 없이 동작하는 사본입니다. 샘플 제품이 들어 있어 정렬·폭·수량을 실제로 조작해보실 수 있습니다.
+      <div style="margin-top:10px;">
+        <a class="cta" href="demo.html" target="_blank">라벨 디자이너 데모 열기 →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 1. 추가 기능 -->
+  <section>
+    <h2><span class="no">1</span>추가한 기능</h2>
+    <div class="sub">모두 기존 행(row) 구조 위에 옵션 필드만 얹는 방식 — 저장된 템플릿과 호환됩니다.</div>
+
+    <table>
+      <tr><th style="width:150px;">기능</th><th style="width:180px;">기존</th><th>변경 후</th></tr>
+      <tr><td>바코드·QR 정렬</td><td>가운데 고정 (하드코딩)</td><td>좌 · 중 · 우 선택 (기본값 중앙 — 기존과 동일)</td></tr>
+      <tr class="hl"><td>바코드 폭</td><td>내용 길이에 따라 자동</td><td>10~100% 지정 (빈칸이면 기존처럼 자동). 감열 라벨에서 스캔 인식률 조정에 사용</td></tr>
+      <tr><td>라벨 여백</td><td>1.2mm 고정</td><td>0.1mm 단위 조절 — 감열 프린터 개체별 인쇄 오프셋 보정용</td></tr>
+      <tr><td>행 간격</td><td>0.6mm 고정</td><td>전체 행간격 조절 + <b>행별 개별 간격</b> 추가 지정</td></tr>
+      <tr><td>세로 정렬</td><td>세로 가운데 고정</td><td>상 · 중 · 하 선택</td></tr>
+      <tr class="hl"><td>하단 숫자</td><td>8px 고정, 조절 UI 없음</td><td>크기 4~24px + 굵게 옵션</td></tr>
+      <tr><td>인쇄 수량</td><td>같은 제품을 여러 번 추가(중복 등록). 추가 후 수량 변경 불가</td><td>제품별 수량 입력칸(1~500). "N개 품목 · 총 M장" 표시</td></tr>
+    </table>
+  </section>
+
+  <!-- 2. 버그 -->
+  <section>
+    <h2><span class="no">2</span>수정한 버그 — 바코드 왼쪽 쏠림 <span class="badge p1">실사용 발견</span></h2>
+    <div class="sub">폭(%)을 지정하면 바코드가 가운데 정렬되지 않고 왼쪽으로 붙던 문제</div>
+
+    <p><b>원인</b> — 퍼센트 폭을 가진 인라인 SVG에는 크롬이 <code>text-align:center</code>를 적용하지 않습니다. 폭이 "자동"일 때만 가운데가 맞고, 폭을 지정하는 순간 좌측으로 붙었습니다.</p>
+    <p><b>수정</b> — 정렬 방식을 <code>display:block</code> + <code>margin:auto</code> 기반으로 교체했습니다.</p>
+
+    <h3>수정 후 측정 (라벨 60×40mm 기준, 좌우 여백 픽셀)</h3>
+    <table>
+      <tr><th style="width:200px;">설정</th><th>좌측 여백</th><th>우측 여백</th><th style="width:90px;">결과</th></tr>
+      <tr><td>폭 95% · 가운데</td><td>10.9px</td><td>10.9px</td><td>대칭</td></tr>
+      <tr><td>폭 50% · 가운데</td><td>59.5px</td><td>59.5px</td><td>대칭</td></tr>
+      <tr><td>폭 50% · 좌측</td><td>5.5px</td><td>113.4px</td><td>정상</td></tr>
+      <tr><td>폭 50% · 우측</td><td>113.4px</td><td>5.5px</td><td>정상</td></tr>
+      <tr><td>자동 · 가운데</td><td>13.4px</td><td>13.4px</td><td>대칭</td></tr>
+    </table>
+  </section>
+
+  <!-- 3. 호환성 -->
+  <section>
+    <h2><span class="no">3</span>호환성 · 검증</h2>
+
+    <h3>기존 데이터 영향</h3>
+    <ul>
+      <li><b>저장된 라벨 템플릿</b> — 새 필드(<code>pad</code>/<code>gap</code>/<code>valign</code>/<code>width</code>/<code>mt</code>/<code>textBold</code>)는 없으면 기존 기본값으로 폴백합니다. 기존 템플릿을 열어도 지금까지와 똑같이 출력됩니다.</li>
+      <li><b>백엔드</b> — 템플릿 config가 자유형 JSON으로 저장되는 구조라 <code>routes_api.py</code> 등 서버 코드는 수정하지 않았습니다.</li>
+      <li><b>다른 화면</b> — 라벨(바코드 인쇄) 화면 외 기능은 건드리지 않았습니다.</li>
+    </ul>
+
+    <h3>검증 내역</h3>
+    <ul>
+      <li>전체 스크립트 문법 검사 (단일 파일 SPA라 문법 오류 시 전 화면 백지 — 필수 확인)</li>
+      <li>렌더 로직 단위 테스트 14항목 통과 (정렬·폭·간격·EAN-13 체크섬·수량 확장·레거시 폴백)</li>
+      <li>브라우저 실동작 확인 — 미리보기 반영, 픽셀 측정(위 표), 하단 숫자 굵게 적용</li>
+      <li><b>미검증</b> — 실물 감열 프린터 출력. 배포 후 매장 라벨 1장 시험 출력 권장</li>
+    </ul>
+  </section>
+
+  <!-- 4. 요청 -->
+  <section>
+    <h2><span class="no">4</span>요청 사항</h2>
+
+    <h3>① 브랜치 확인 · 머지</h3>
+    <p><code>feature/label-align</code> (커밋 5개, <code>static/index.html</code> 54줄 추가 / 27줄 변경)</p>
+    <table>
+      <tr><th style="width:110px;">커밋</th><th>내용</th></tr>
+      <tr><td><code>277f7d3</code></td><td>정렬·여백·세로정렬 옵션 + 제품별 인쇄 수량</td></tr>
+      <tr><td><code>a1b6acf</code></td><td>바코드 폭(%) 지정 + 행별 간격(mm)</td></tr>
+      <tr><td><code>312ef9f</code></td><td>하단 숫자 크기 조절 UI</td></tr>
+      <tr><td><code>810ba7f</code></td><td>폭 지정 시 왼쪽 쏠림 버그 수정</td></tr>
+      <tr><td><code>484f660</code></td><td>하단 숫자 굵게 옵션</td></tr>
+    </table>
+
+    <h3>② 서버 SSH 키 등록 <span class="badge p2">협조 요청</span></h3>
+    <p>앞으로 이런 화면(<code>static/</code>) 개선은 서울쇼룸에서 직접 배포까지 진행하려고 합니다. 매번 실장님 손을 거치지 않아도 되도록 아래 공개키를 등록해주실 수 있을까요?</p>
+    <pre><code>echo "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEaKF48VrnpGx1t5v9dKS7s54mk7xe/647jWnGxndT9H jongjin-kanzibox-deploy" &gt;&gt; /root/.ssh/authorized_keys</code></pre>
+    <div class="call amber">
+      <b class="t">운영 원칙</b>
+      백엔드(<code>app/*.py</code>)와 DB는 건드리지 않고 화면 위주로만 작업하겠습니다. 배포 전에는 미리 공유드리고, 문제 발생 시 <code>git revert</code> 후 재배포로 즉시 되돌리겠습니다.
+    </div>
+    <p style="font-size:12.5px; color:var(--sub);">※ root 키 공유가 부담되시면 배포 전용 계정을 따로 만들어주셔도 됩니다. 또는 이번 건만 실장님이 배포해주셔도 무방합니다.</p>
+
+    <h3>③ 배포 (머지 후)</h3>
+    <pre><code>scp static/index.html root@115.68.221.70:/opt/inventree/kanzi-box/static/
+ssh root@115.68.221.70 'cd /opt/inventree &amp;&amp; docker compose build kanzi-box &amp;&amp; docker compose up -d kanzi-box'
+curl https://kanzi.connectglobal.kr/box/healthz</code></pre>
+  </section>
+
+  <section style="text-align:center;">
+    <a class="cta" href="demo.html" target="_blank">라벨 디자이너 데모 열기 →</a>
+    <p style="font-size:12px; color:var(--sub); margin-top:10px;">데모는 샘플 데이터로 동작하는 사본입니다. 실제 서버·데이터에 영향을 주지 않습니다.</p>
+  </section>
+
+  <footer>KANZI BOX 바코드 라벨 디자이너 개선 · 2026-07-28 · 서울쇼룸 양종진 · 내부 공유용</footer>
+
+</div>
+</body>
+</html>
