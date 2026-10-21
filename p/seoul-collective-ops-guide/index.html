@@ -32,6 +32,7 @@
          word-break: keep-all; overflow-wrap: break-word; -webkit-font-smoothing: antialiased; }
   .shell { display: grid; grid-template-columns: 236px minmax(0, 1fr); gap: 40px; max-width: 1180px; margin: 0 auto;
            padding-block: 36px 80px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+  .shell > * { min-width: 0; }  /* 가로 목차가 화면 폭을 밀어내지 않게 */
   nav.toc { position: sticky; top: calc(24px + env(safe-area-inset-top, 0px)); align-self: start; max-height: calc(100vh - 48px); overflow-y: auto; }
   .toc .brand { font-weight: 800; letter-spacing: .02em; font-size: 15px; margin-bottom: 2px; }
   .toc .brand-sub { color: var(--muted); font-size: 12px; margin-bottom: 18px; }
