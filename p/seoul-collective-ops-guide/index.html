@@ -87,7 +87,7 @@
         <tr><th></th><th class="kr">한국 스토어</th><th class="jp">일본 스토어</th></tr>
         <tr><td class="k">오픈 후 주소</td><td><code>seoulcollective.kr</code></td><td>미정 (추천 <code>jp.seoulcollective.kr</code> → 추후 <code>seoulcollective.jp</code>)</td></tr>
         <tr><td class="k">언어 · 통화</td><td>한국어 · 원화 (가격 표기 <code>68,000원</code>)</td><td>일본어 · 엔화 (세금·관세 포함 총액 표시)</td></tr>
-        <tr><td class="k">게시 중인 테마</td><td>Seoul Collective KR v8</td><td>Seoul Collective JP v17</td></tr>
+        <tr><td class="k">게시 중인 테마</td><td>Seoul Collective KR v9</td><td>Seoul Collective JP v18</td></tr>
         <tr><td class="k">배송</td><td>국내 「표준」 3,000원 (결제 시험용 <b>임시값</b>) · 택배사 <b>미정</b></td><td>한→일 운송사(예정) → 일본 국내 <b>사가와(佐川急便)</b>, 고객 배송비 무료</td></tr>
         <tr><td class="k">결제</td><td>국내 PG <b>미정</b></td><td>일본 결제대행사 검토 중 (<b>미정</b>)</td></tr>
         <tr><td class="k">법정 표기</td><td>사업자 정보·이용약관·개인정보처리방침</td><td>特定商取引法に基づく表記</td></tr>
@@ -295,16 +295,16 @@
       <h2><span class="no">7</span>테마 수정 규칙</h2>
       <p class="sub">디자인·구조 수정은 게시 중인 테마에서 직접 하지 않습니다. 실수해도 바로 되돌릴 수 있게 복제본에서 작업합니다.</p>
       <ol class="steps">
-        <li><b>온라인 스토어 → 테마</b> → 게시 테마 「…」 → <b>복제</b> (이름 끝 버전 번호를 하나 올림. 예: KR v8 → KR v9)</li>
+        <li><b>온라인 스토어 → 테마</b> → 게시 테마 「…」 → <b>복제</b> (이름 끝 버전 번호를 하나 올림. 예: KR v9 → KR v10)</li>
         <li>복제본에서 수정 (스크립트 작업도 항상 복제본에)</li>
         <li><b>미리보기</b>로 PC·모바일 확인 (홈, 상품 상세, 목록, 장바구니)</li>
         <li>문제없으면 복제본 <b>게시</b>. 직전 테마는 백업으로 하나만 남기고 그 이전 버전은 정리</li>
       </ol>
       <div class="tbl"><table>
         <tr><th>테마</th><th class="kr">한국</th><th class="jp">일본</th></tr>
-        <tr><td class="k">게시 중</td><td>Seoul Collective KR v8</td><td>Seoul Collective JP v17</td></tr>
+        <tr><td class="k">게시 중</td><td>Seoul Collective KR v9</td><td>Seoul Collective JP v18</td></tr>
         <tr><td class="k">한국어·일본어 전용 서체 규칙</td><td>snippets/ssr-kr (Pretendard, 한글 자간)</td><td>snippets/ssr-custom (Noto Sans JP·명조)</td></tr>
-        <tr><td class="k">KR | JP 전환 버튼</td><td colspan="2">snippets/ssr-market-switch — PC·모바일 모두 맨 위 공지 띠 오른쪽. 컬렉션·안내 페이지는 상대 스토어의 같은 페이지로, 상품·브랜드 페이지 등은 상대 스토어 홈으로 이동. <b>도메인이 정해지면 파일 맨 위 <code>kr_url</code>·<code>jp_url</code> 두 줄만 바꾸면 됩니다</b> (두 스토어 모두)</td></tr>
+        <tr><td class="k">KR | JP 전환 버튼</td><td colspan="2">snippets/ssr-market-switch — PC는 헤더 돋보기 왼쪽, 모바일은 맨 위 공지 띠 오른쪽(헤더에 자리가 없어서). 컬렉션·안내 페이지는 상대 스토어의 같은 페이지로, 상품·브랜드 페이지 등은 상대 스토어 홈으로 이동. <b>도메인이 정해지면 파일 맨 위 <code>kr_url</code>·<code>jp_url</code> 두 줄만 바꾸면 됩니다</b> (두 스토어 모두)</td></tr>
       </table></div>
     </section>
 
@@ -340,6 +340,7 @@
         <tr><td class="k">브랜드명 철자 다르게 입력 (예: <code>Camino</code>)</td><td>브랜드 페이지·필터에서 상품이 빠짐</td><td>03장 공급업체 목록 그대로 복사</td></tr>
         <tr><td class="k">태그 <code>2026FW</code> 누락</td><td>신상품·홈 「이번 주 신상품」에 안 나옴</td><td>등록 체크리스트 확인</td></tr>
         <tr><td class="k">옵션 이름을 「컬러」, 「Size」 등으로 입력</td><td>색상 점·필터·고시표 색상이 안 나옴</td><td>한국 「색상·사이즈」, 일본 「カラー・サイズ」</td></tr>
+        <tr><td class="k">테마 목록의 「업데이트」 버튼 클릭</td><td>Shopify 기본 테마의 새 버전으로 바뀌면서 우리가 고친 코드(KR | JP 버튼·한국어 서체·고시표 등)가 빠지거나 어긋날 수 있음</td><td>누르지 말고 Claude에게 요청 → 복제본에서 업데이트·재적용 후 확인</td></tr>
         <tr><td class="k">게시 테마를 직접 수정</td><td>실수가 바로 고객 화면에 노출</td><td>06장 복제 → 미리보기 → 게시</td></tr>
         <tr><td class="k">일본 배송 지역 삭제·변경</td><td>재고가 있어도 전 상품 「売り切れ」로 표시</td><td>배송 설정의 「日本」 지역은 건드리지 않기</td></tr>
         <tr><td class="k">일본 특상법의 회사명을 브랜드명으로 변경</td><td>법정 표기 오류</td><td>販売業者는 회사명(ソウルショールーム) 유지</td></tr>
