@@ -87,9 +87,9 @@
         <tr><th></th><th class="kr">한국 스토어</th><th class="jp">일본 스토어</th></tr>
         <tr><td class="k">오픈 후 주소</td><td><code>seoulcollective.kr</code></td><td>미정 (추천 <code>jp.seoulcollective.kr</code> → 추후 <code>seoulcollective.jp</code>)</td></tr>
         <tr><td class="k">언어 · 통화</td><td>한국어 · 원화 (가격 표기 <code>68,000원</code>)</td><td>일본어 · 엔화 (세금·관세 포함 총액 표시)</td></tr>
-        <tr><td class="k">게시 중인 테마</td><td>Seoul Collective KR v11 (Horizon 4.3)</td><td>Seoul Collective JP v19 (Horizon 4.3)</td></tr>
+        <tr><td class="k">게시 중인 테마</td><td>Seoul Collective KR v12 (국가 안내) · Horizon 4.3</td><td>Seoul Collective JP v20 (国別案内) · Horizon 4.3</td></tr>
         <tr><td class="k">배송</td><td>국내 「표준」 3,000원 (결제 시험용 <b>임시값</b>) · 택배사 <b>미정</b></td><td>한→일 운송사(예정) → 일본 국내 <b>사가와(佐川急便)</b>, 고객 배송비 무료</td></tr>
-        <tr><td class="k">결제</td><td>국내 PG <b>미정</b></td><td>일본 결제대행사 검토 중 (<b>미정</b>)</td></tr>
+        <tr><td class="k">결제</td><td>국내 PG <b>미정</b> — 국내 결제대행사 검토 중 (카드·카드사 앱결제·카카오페이·네이버페이 가능)</td><td>일본 결제대행사 검토 중 (<b>미정</b>)</td></tr>
         <tr><td class="k">법정 표기</td><td>사업자 정보·이용약관·개인정보처리방침</td><td>特定商取引法に基づく表記</td></tr>
         <tr><td class="k">스토어 종류</td><td>정식 전환 가능 (오픈 시 그대로 전환)</td><td>테스트용 → <b>오픈 전 정식 전환 가능한 스토어로 이전 필요</b></td></tr>
       </table></div>
@@ -149,6 +149,12 @@
         <tr><td class="k">출고 전 취소</td><td colspan="2">가능. 출고 후에는 반품으로 진행</td></tr>
       </table></div>
       <p>환불은 해당 주문 화면의 <b>환불</b> 버튼으로 진행합니다(PG 연동 후 사용). 브랜드 사정으로 품절된 상품이 주문되면 고객에게 먼저 연락하고 전액 환불합니다.</p>
+
+      <h3>고객 알림 메일</h3>
+      <ul>
+        <li><span class="badge kr">한국</span> 주문·배송 메일은 해요체 한국어로 바꾼 템플릿을 씁니다(제목 예: 「[SEOUL COLLECTIVE] 주문하신 상품이 출발했어요」). 고친 템플릿은 Shopify 자동 번역이 꺼지므로, <b>「기본값으로 되돌리기」를 누르면 영어 문구로 돌아갑니다.</b> 문구를 바꾸고 싶으면 Claude에게 요청하세요.</li>
+        <li><span class="badge jp">일본</span> 손대지 않은 기본 템플릿이라 Shopify가 일본어로 자동 번역해 보냅니다.</li>
+      </ul>
 
       <h3>고객 문의·리뷰</h3>
       <ul>
@@ -295,16 +301,17 @@
       <h2><span class="no">7</span>테마 수정 규칙</h2>
       <p class="sub">디자인·구조 수정은 게시 중인 테마에서 직접 하지 않습니다. 실수해도 바로 되돌릴 수 있게 복제본에서 작업합니다.</p>
       <ol class="steps">
-        <li><b>온라인 스토어 → 테마</b> → 게시 테마 「…」 → <b>복제</b> (이름 끝 버전 번호를 하나 올림. 예: KR v11 → KR v12)</li>
+        <li><b>온라인 스토어 → 테마</b> → 게시 테마 「…」 → <b>복제</b> (이름 끝 버전 번호를 하나 올림. 예: KR v12 → KR v13)</li>
         <li>복제본에서 수정 (스크립트 작업도 항상 복제본에)</li>
         <li><b>미리보기</b>로 PC·모바일 확인 (홈, 상품 상세, 목록, 장바구니)</li>
         <li>문제없으면 복제본 <b>게시</b>. 직전 테마는 백업으로 하나만 남기고 그 이전 버전은 정리</li>
       </ol>
       <div class="tbl"><table>
         <tr><th>테마</th><th class="kr">한국</th><th class="jp">일본</th></tr>
-        <tr><td class="k">게시 중</td><td>Seoul Collective KR v11 (Horizon 4.3)</td><td>Seoul Collective JP v19 (Horizon 4.3)</td></tr>
+        <tr><td class="k">게시 중</td><td>Seoul Collective KR v12 (국가 안내) · Horizon 4.3</td><td>Seoul Collective JP v20 (国別案内) · Horizon 4.3</td></tr>
         <tr><td class="k">한국어·일본어 전용 서체 규칙</td><td>snippets/ssr-kr (Pretendard, 한글 자간)</td><td>snippets/ssr-custom (Noto Sans JP·명조)</td></tr>
         <tr><td class="k">KR | JP 전환 버튼</td><td colspan="2">snippets/ssr-market-switch — PC는 헤더 돋보기 왼쪽, 모바일은 맨 위 공지 띠 오른쪽(헤더에 자리가 없어서). 컬렉션·안내 페이지는 상대 스토어의 같은 페이지로, 상품·브랜드 페이지 등은 상대 스토어 홈으로 이동. <b>도메인이 정해지면 파일 맨 위 <code>kr_url</code>·<code>jp_url</code> 두 줄만 바꾸면 됩니다</b> (두 스토어 모두)</td></tr>
+        <tr><td class="k">국가별 접속 안내 배너</td><td colspan="2">snippets/ssr-geo-banner (10/23) — 접속 위치(IP)가 상대 나라면 맨 위에 「○○ 스토어로 갈까요?」 배너. 한국 스토어+일본 IP → 일본어, 일본 스토어+한국 IP → 한국어. <b>강제 이동 없음</b>(검색 노출 보호). 「그대로 보기」를 누르거나 KR | JP 버튼으로 넘어온 손님은 30일간 안 띄움. 한국·일본 외 국가·검색로봇에는 안 뜸. 이동 주소 규칙은 KR | JP 버튼과 같음. 점검: 주소 끝에 <code>?ssr_geo_test=1</code>을 붙이면 위치와 상관없이 표시. <b>도메인 변경 시 이 파일의 주소 두 줄도 함께 교체</b></td></tr>
       </table></div>
     </section>
 
@@ -317,11 +324,11 @@
         <tr><td class="k">통화 형식</td><td>설정 → 일반 → 통화 표시</td><td><code>{{amount_no_decimals}}원</code></td><td>엔화 기본</td></tr>
         <tr><td class="k">시간대</td><td>설정 → 일반</td><td>서울</td><td>도쿄</td></tr>
         <tr><td class="k">배송</td><td>설정 → 배송 및 배달</td><td>국내 「표준」 3,000원 하나 (결제 시험용 임시값, 특급·해외 요금 삭제)</td><td>배송 지역 「日本」 · 「送料無料・佐川急便（関税・送料込み）」 0엔</td></tr>
-        <tr><td class="k">알림 메일</td><td>설정 → 알림 → 고객 알림 → 사용자 지정</td><td>로고·강조색 #8C4A5A 적용</td><td>SEOUL COLLECTIVE 로고 적용</td></tr>
+        <tr><td class="k">알림 메일</td><td>설정 → 알림 → 고객 알림 → 사용자 지정</td><td>로고·강조색 #8C4A5A 적용 · 문구 해요체 한국어로 교체(주문 확인·배송 4종 10/23 완료, 주문 취소·환불·장바구니 이탈 진행 중)</td><td>SEOUL COLLECTIVE 로고 적용 · 문구는 Shopify 자동 번역(일본어) 그대로</td></tr>
         <tr><td class="k">결제</td><td>설정 → 결제</td><td>테스트 결제(Bogus Gateway) 켜짐 — PG 연동 때 끄기</td><td>PG 미정</td></tr>
         <tr><td class="k">세금 표시</td><td>설정 → 세금 및 관세</td><td>주문 메일에 「세금 0원」 줄이 나옴 → 「가격에 세금 포함」으로 정리 검토</td><td>—</td></tr>
         <tr><td class="k">검색·공유 정보</td><td>온라인 스토어 → 환경설정</td><td>입력 완료</td><td>입력 필요</td></tr>
-        <tr><td class="k">발신 메일 주소</td><td>설정 → 알림</td><td colspan="2">지금은 개인 Gmail 주소로 발송돼 받는 쪽에서 스팸으로 분류될 수 있음. 도메인 연결 후 회사 도메인 메일로 인증. 기본 메일 문구는 합니다체라 해요체 수정안 적용 예정</td></tr>
+        <tr><td class="k">발신 메일 주소</td><td>설정 → 알림</td><td colspan="2">지금은 개인 Gmail 주소로 발송돼 받는 쪽에서 스팸으로 분류될 수 있음. 도메인 연결 후 회사 도메인 메일로 인증</td></tr>
       </table></div>
       <h3>설치된 앱</h3>
       <div class="tbl"><table>
@@ -341,6 +348,7 @@
         <tr><td class="k">태그 <code>2026FW</code> 누락</td><td>신상품·홈 「이번 주 신상품」에 안 나옴</td><td>등록 체크리스트 확인</td></tr>
         <tr><td class="k">옵션 이름을 「컬러」, 「Size」 등으로 입력</td><td>색상 점·필터·고시표 색상이 안 나옴</td><td>한국 「색상·사이즈」, 일본 「カラー・サイズ」</td></tr>
         <tr><td class="k">테마 목록의 「업데이트」 버튼 클릭</td><td>Shopify 기본 테마의 새 버전으로 바뀌면서 우리가 고친 코드(KR | JP 버튼·한국어 서체·고시표 등)가 빠지거나 어긋날 수 있음</td><td>누르지 말고 Claude에게 요청 → 관리자에서 게시 테마를 「…」→「복제」한 사본에서 업데이트(API로 만든 복제본은 코드가 빠짐, 버튼이 없으면 Claude가 다른 스토어 업데이트분을 옮겨 적용) → 비교 확인 후 게시. 현재 두 스토어 Horizon 4.3</td></tr>
+        <tr><td class="k">한국 알림 메일 템플릿에서 「기본값으로 되돌리기」</td><td>해요체 한국어 문구가 지워지고 영어 메일이 나감</td><td>되돌리지 말고 Claude에게 문구 수정 요청</td></tr>
         <tr><td class="k">게시 테마를 직접 수정</td><td>실수가 바로 고객 화면에 노출</td><td>06장 복제 → 미리보기 → 게시</td></tr>
         <tr><td class="k">일본 배송 지역 삭제·변경</td><td>재고가 있어도 전 상품 「売り切れ」로 표시</td><td>배송 설정의 「日本」 지역은 건드리지 않기</td></tr>
         <tr><td class="k">일본 특상법의 회사명을 브랜드명으로 변경</td><td>법정 표기 오류</td><td>販売業者는 회사명(ソウルショールーム) 유지</td></tr>
@@ -410,7 +418,8 @@
         <li>결정된 가격·환율을 설정에 반영 → 테스트 상품 재계산 또는 정리</li>
         <li>선별 상품 전체 등록 (초안으로 검수 후 활성)</li>
         <li>【 】 칸 채우기, 반품배송비 엔화 금액·사업자 정보 반영</li>
-        <li>알림 메일 문구 해요체 적용, 세금 표시 정리</li>
+        <li>알림 메일 문구 해요체 적용(주문 확인·배송 4종 10/23 완료, 나머지 진행 중), 세금 표시 정리</li>
+        <li><s>국가별 접속 안내</s> → 10/23 완료 (IP 기준 안내 배너, 강제 이동 없음)</li>
         <li>PG 연동 → 실결제 확인 (테스트 결제 끄기)</li>
         <li>일본 스토어 이전: 새 스토어 생성 → 연동 앱·Judge.me 설치 → Claude가 이전 도구로 복사 → 정책·배송·필터 등 수동 설정 → 두 스토어 정식 전환(Basic 요금제)</li>
         <li>도메인 연결(KR | JP 전환 버튼 주소도 함께 교체), 발신 메일 인증, 견본 상품 삭제 → 오픈</li>
@@ -442,7 +451,7 @@
       <div class="call blue"><b class="t">요청 팁</b> 「어느 스토어(한국/일본/둘 다)」, 「대상(상품·페이지)」, 「바꿀 내용」을 함께 말하면 한 번에 끝납니다. 큰 변경은 Claude가 먼저 미리보기(초안·복제 테마)로 만든 뒤 확인을 받습니다.</div>
     </section>
 
-    <footer>SEOUL COLLECTIVE 스토어 운영 가이드 · 서울쇼룸 · 2026.10.21 기준 · 정책이 정해질 때마다 이 문서를 갱신합니다. (공유용 정리본)</footer>
+    <footer>SEOUL COLLECTIVE 스토어 운영 가이드 · 서울쇼룸 · 2026.10.23 기준 · 정책이 정해질 때마다 이 문서를 갱신합니다. (공유용 정리본)</footer>
   </div>
 </body>
 </html>
