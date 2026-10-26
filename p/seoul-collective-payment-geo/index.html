@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>결제 연동·국가별 접속 안내</title>
+<style>
+  :root{
+    --bg:#F7F9FC; --card:#FFFFFF; --ink:#0E1526; --muted:#6B7688; --line:#E8ECF3;
+    --blue:#2657E8; --blue-soft:#EEF3FE; --warn:#B45309; --warn-soft:#FFF6E6;
+    --fail:#D14343; --fail-soft:#FDEFEF; --ok:#0E9BB5; --ok-soft:#E8F7FA;
+    --violet:#6D4FE0; --violet-soft:#F1EEFC; --key:#FAFBFD;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:"Pretendard","SUIT","Malgun Gothic","맑은 고딕",-apple-system,"Segoe UI",sans-serif;
+    font-size:15px;line-height:1.65;word-break:keep-all;overflow-wrap:break-word}
+  .wrap{max-width:1040px;margin:0 auto;padding:40px 24px 80px}
+  .eyebrow{font-size:12px;letter-spacing:.2em;color:var(--muted);font-weight:700;text-transform:uppercase}
+  h1{font-size:32px;font-weight:800;letter-spacing:-.02em;margin:10px 0 8px;line-height:1.3}
+  h1 em{font-style:normal;color:var(--blue)}
+  .sub{color:var(--muted);margin:0}
+  .meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+  .pill{display:inline-flex;align-items:center;gap:6px;padding:4px 11px;border-radius:20px;font-size:12.5px;font-weight:700;background:var(--blue-soft);color:var(--blue)}
+  .pill::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+  .pill.warn{background:var(--warn-soft);color:var(--warn)}
+  .pill.ok{background:var(--ok-soft);color:var(--ok)}
+  .pill.violet{background:var(--violet-soft);color:var(--violet)}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:28px 30px;margin-top:22px}
+  .sec-head{display:flex;align-items:baseline;gap:12px;margin-bottom:6px}
+  .sec-no{font-size:13px;font-weight:800;color:var(--blue);letter-spacing:.08em}
+  h2{font-size:21px;font-weight:800;letter-spacing:-.01em;margin:0}
+  h3{font-size:16px;font-weight:800;margin:24px 0 8px}
+  .lead{color:var(--muted);margin:4px 0 16px}
+  p{margin:8px 0}
+  ul{margin:8px 0;padding-left:20px}
+  li{margin:3px 0}
+  b,strong{font-weight:700}
+
+  .tbl{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;margin:12px 0}
+  table{border-collapse:collapse;width:100%;min-width:560px;font-size:14px}
+  th{background:var(--ink);color:#fff;font-weight:700;text-align:left;padding:10px 12px;white-space:nowrap}
+  td{padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+  td.k{background:var(--key);font-weight:700;white-space:nowrap}
+  tr.rec td{background:var(--blue-soft)}
+
+  .summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;margin-top:22px}
+  .sum{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px 24px}
+  .sum .t{font-size:13px;font-weight:800;color:var(--blue);letter-spacing:.06em}
+  .sum .h{font-size:19px;font-weight:800;margin:6px 0 6px;line-height:1.4}
+  .sum p{color:var(--muted);font-size:14px;margin:0}
+
+  .steps{counter-reset:s;display:grid;gap:10px;margin-top:14px}
+  .stp{display:grid;grid-template-columns:44px 1fr auto;gap:14px;align-items:start;border:1px solid var(--line);border-radius:14px;padding:16px 18px;background:var(--key)}
+  .stp .n{width:34px;height:34px;border-radius:50%;background:var(--blue);color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center}
+  .stp .st{font-weight:800;font-size:15.5px}
+  .stp .sd{color:var(--muted);font-size:14px;margin-top:2px}
+  .who{font-size:12px;font-weight:800;padding:3px 10px;border-radius:20px;white-space:nowrap;align-self:center}
+  .who.us{background:var(--blue-soft);color:var(--blue)}
+  .who.ceo{background:var(--violet-soft);color:var(--violet)}
+  .who.pg{background:var(--ok-soft);color:var(--ok)}
+
+  .pay{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:12px}
+  .pm{border:1px solid var(--line);border-radius:12px;padding:14px;text-align:center;background:var(--key)}
+  .pm b{display:block;font-size:15px}
+  .pm span{font-size:12.5px;color:var(--muted)}
+
+  .rec-box{background:var(--blue-soft);border-radius:10px;padding:12px 16px;margin-top:12px;font-size:14px}
+  .rec-box b{color:var(--blue)}
+  .note{background:var(--warn-soft);color:#7A3E06;border-radius:10px;padding:12px 16px;margin-top:12px;font-size:14px}
+
+  /* 접속 흐름 그림 */
+  .diagram{margin:16px 0 6px;overflow-x:auto}
+  .diagram svg{display:block;width:100%;min-width:620px;height:auto}
+
+  .banner-mock{border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-top:12px;max-width:560px}
+  .banner-mock .bar{background:var(--ink);color:#fff;font-size:13.5px;padding:10px 14px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between}
+  .banner-mock .btns{display:flex;gap:6px}
+  .banner-mock .b1{background:#fff;color:var(--ink);border-radius:6px;padding:4px 10px;font-weight:700;font-size:12.5px}
+  .banner-mock .b2{border:1px solid rgba(255,255,255,.4);border-radius:6px;padding:4px 10px;font-size:12.5px}
+  .banner-mock .page{background:var(--key);height:70px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:13px}
+
+  .cmp{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin-top:12px}
+  .opt{border:1px solid var(--line);border-radius:14px;padding:18px 20px}
+  .opt.best{border-color:var(--blue);box-shadow:0 0 0 1px var(--blue) inset}
+  .opt .ot{font-weight:800;font-size:16px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+  .opt ul{font-size:14px}
+  .good{color:var(--ok);font-weight:700}
+  .bad{color:var(--fail);font-weight:700}
+  footer{color:var(--muted);font-size:12.5px;margin-top:28px}
+
+  @media (max-width:640px){
+    .wrap{padding:28px 16px 60px}
+    h1{font-size:26px}
+    section.card{padding:22px 18px}
+    .stp{grid-template-columns:40px 1fr}
+    .stp .who{grid-column:2;justify-self:start}
+  }
+  @media print{
+    body{background:#fff;font-size:12.5px}
+    .wrap{padding:0;max-width:none}
+    section.card{break-inside:avoid-page;border-color:#d8dde6;margin-top:14px;padding:18px 20px}
+    th,.pill,.who,.stp .n,.rec-box,.note,.banner-mock .bar,.opt.best{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <p style="margin:0 0 14px;font-size:13px;font-weight:700"><a href="../../" style="color:#2657E8;text-decoration:none">← 공유 문서</a></p>
+  <div class="eyebrow">SEOUL SHOWROOM · BRIEFING</div>
+  <h1>SEOUL COLLECTIVE <em>결제 연동</em>과 <em>국가별 접속</em> 안내</h1>
+  <p class="sub">한국 스토어에 카카오페이·네이버페이·카드 앱결제를 붙이는 절차, 그리고 한국·일본 손님이 각자 맞는 스토어로 들어오게 하는 방법</p>
+  <div class="meta">
+    <span class="pill">2026.10.23</span>
+    <span class="pill violet">내부 보고용</span>
+    <span class="pill warn">대표님 결정 2건</span>
+  </div>
+
+  <!-- 한눈에 -->
+  <div class="summary">
+    <div class="sum">
+      <div class="t">결론 ①  결제</div>
+      <div class="h">카카오페이·네이버페이·카드 앱결제 모두 가능합니다</div>
+      <p>Shopify 기본 결제는 한국에서 쓸 수 없어서, 국내 결제 대행사(PG)와 계약하고 <b>연결 앱</b>이라는 연결 앱으로 붙입니다. 계약부터 오픈까지 약 3~5주.</p>
+    </div>
+    <div class="sum">
+      <div class="t">결론 ②  국가별 접속</div>
+      <div class="h">일본에서 들어오면 “일본 스토어로 갈까요?” 안내를 띄웁니다</div>
+      <p>강제로 튕겨 보내지 않고 <b>안내 배너로 권유</b>하는 방식을 추천합니다. 추가 비용 없이 우리가 테마에 직접 넣을 수 있습니다.</p>
+    </div>
+  </div>
+
+  <!-- 1 결제 -->
+  <section class="card">
+    <div class="sec-head"><span class="sec-no">01</span><h2>한국 스토어 결제, 어떻게 붙이나</h2></div>
+    <p class="lead">손님이 결제 버튼을 누르면 아래 순서로 돈이 흘러갑니다. 연결 앱은 “콘센트”, PG사는 “전기 회사”라고 보시면 됩니다.</p>
+
+    <div class="diagram">
+      <svg viewBox="0 0 860 150" xmlns="http://www.w3.org/2000/svg" font-family="Pretendard, 'Malgun Gothic', sans-serif">
+        <defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#6B7688"/></marker></defs>
+        <g font-size="14" font-weight="700" text-anchor="middle">
+          <rect x="10" y="35" width="150" height="70" rx="12" fill="#FAFBFD" stroke="#E8ECF3"/>
+          <text x="85" y="66" fill="#0E1526">손님</text><text x="85" y="88" fill="#6B7688" font-size="12" font-weight="400">결제수단 선택</text>
+          <rect x="185" y="35" width="150" height="70" rx="12" fill="#FAFBFD" stroke="#E8ECF3"/>
+          <text x="260" y="66" fill="#0E1526">우리 스토어</text><text x="260" y="88" fill="#6B7688" font-size="12" font-weight="400">Shopify 결제 화면</text>
+          <rect x="360" y="35" width="150" height="70" rx="12" fill="#EEF3FE" stroke="#2657E8"/>
+          <text x="435" y="66" fill="#2657E8">연결 앱</text><text x="435" y="88" fill="#6B7688" font-size="12" font-weight="400">연결 앱</text>
+          <rect x="535" y="35" width="150" height="70" rx="12" fill="#E8F7FA" stroke="#0E9BB5"/>
+          <text x="610" y="66" fill="#0E9BB5">PG사</text><text x="610" y="88" fill="#6B7688" font-size="12" font-weight="400">국내 PG사</text>
+          <rect x="710" y="35" width="140" height="70" rx="12" fill="#FAFBFD" stroke="#E8ECF3"/>
+          <text x="780" y="66" fill="#0E1526">회사 계좌</text><text x="780" y="88" fill="#6B7688" font-size="12" font-weight="400">수수료 빼고 정산</text>
+        </g>
+        <g stroke="#6B7688" stroke-width="1.6" marker-end="url(#a)">
+          <line x1="162" y1="70" x2="182" y2="70"/><line x1="337" y1="70" x2="357" y2="70"/>
+          <line x1="512" y1="70" x2="532" y2="70"/><line x1="687" y1="70" x2="707" y2="70"/>
+        </g>
+      </svg>
+    </div>
+
+    <h3>손님에게 보이게 될 결제수단</h3>
+    <div class="pay">
+      <div class="pm"><b>신용·체크카드</b><span>카드사 앱결제 포함<br>(앱카드·ISP/페이북)</span></div>
+      <div class="pm"><b>카카오페이</b><span>별도 가맹 심사</span></div>
+      <div class="pm"><b>네이버페이</b><span>결제형 · 별도 심사</span></div>
+      <div class="pm"><b>토스페이·페이코</b><span>원하면 추가</span></div>
+    </div>
+
+    <h3>진행 순서</h3>
+    <div class="steps">
+      <div class="stp"><div class="n">1</div><div><div class="st">PG사 선택·상담 신청</div><div class="sd">연결 앱을 통해 국내 PG사 2~3곳 견적 비교. 수수료·정산 주기 확인</div></div><span class="who ceo">대표님 결정</span></div>
+      <div class="stp"><div class="n">2</div><div><div class="st">가맹 서류 제출·심사</div><div class="sd">사업자등록증, 통신판매업 신고증, 정산 통장 사본, 대표자 신분증 등. 보통 1~3주</div></div><span class="who pg">PG사 심사</span></div>
+      <div class="stp"><div class="n">3</div><div><div class="st">카카오페이·네이버페이 추가 심사</div><div class="sd">PG 계약과 별도로 각 간편결제사 심사가 붙을 수 있음. 2번과 동시에 진행</div></div><span class="who pg">각사 심사</span></div>
+      <div class="stp"><div class="n">4</div><div><div class="st">연결 앱 설치·결제수단 켜기</div><div class="sd">한국 스토어에 앱 설치 → 승인된 결제수단 연결 → 지금 쓰는 테스트 결제는 끔</div></div><span class="who us">실무 처리</span></div>
+      <div class="stp"><div class="n">5</div><div><div class="st">실결제 테스트 후 오픈</div><div class="sd">수단별 소액 결제 → 환불까지 확인. 주문 알림 메일(한국어)도 함께 점검</div></div><span class="who us">실무 처리</span></div>
+    </div>
+
+    <h3>비용 구조</h3>
+    <div class="tbl">
+      <table>
+        <tr><th>항목</th><th>예상</th><th>설명</th></tr>
+        <tr><td class="k">PG 수수료</td><td>카드 약 2.5~3.5%</td><td>간편결제는 조금 높을 수 있음. 계약 조건에 따라 달라짐</td></tr>
+        <tr><td class="k">Shopify 추가 수수료</td><td>0.5~2%</td><td>외부 결제를 쓰면 붙는 Shopify 수수료. 요금제가 높을수록 낮아짐</td></tr>
+        <tr><td class="k">연결 앱 이용료</td><td>견적 확인</td><td>상담 시 확인</td></tr>
+      </table>
+    </div>
+    <div class="rec-box"><b>추천</b> · 결제 연결 앱 + 국내 PG사로 상담 신청. 견적이 나오면 수수료를 판매가 산식에 반영합니다.</div>
+  </section>
+
+  <!-- 2 국가별 접속 -->
+  <section class="card">
+    <div class="sec-head"><span class="sec-no">02</span><h2>한국·일본 손님을 각자 스토어로</h2></div>
+    <p class="lead">우리는 한국 스토어(원화)와 일본 스토어(엔화)를 따로 운영합니다. 손님의 인터넷 접속 위치(IP)로 어느 나라에서 왔는지 알 수 있어서, 이걸로 맞는 스토어를 안내합니다.</p>
+
+    <div class="diagram">
+      <svg viewBox="0 0 860 260" xmlns="http://www.w3.org/2000/svg" font-family="Pretendard, 'Malgun Gothic', sans-serif">
+        <defs><marker id="b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#6B7688"/></marker></defs>
+        <g text-anchor="middle" font-weight="700">
+          <rect x="10" y="95" width="160" height="70" rx="12" fill="#FAFBFD" stroke="#E8ECF3"/>
+          <text x="90" y="125" font-size="14" fill="#0E1526">손님 접속</text>
+          <text x="90" y="147" font-size="12" font-weight="400" fill="#6B7688">어느 스토어든</text>
+          <rect x="230" y="95" width="170" height="70" rx="12" fill="#EEF3FE" stroke="#2657E8"/>
+          <text x="315" y="125" font-size="14" fill="#2657E8">접속 국가 확인</text>
+          <text x="315" y="147" font-size="12" font-weight="400" fill="#6B7688">IP 기준 · 자동</text>
+          <rect x="470" y="15" width="380" height="64" rx="12" fill="#FAFBFD" stroke="#E8ECF3"/>
+          <text x="660" y="42" font-size="14" fill="#0E1526">맞는 스토어에 있음</text>
+          <text x="660" y="63" font-size="12" font-weight="400" fill="#6B7688">아무것도 안 뜸 — 그대로 쇼핑</text>
+          <rect x="470" y="98" width="380" height="64" rx="12" fill="#E8F7FA" stroke="#0E9BB5"/>
+          <text x="660" y="125" font-size="14" fill="#0E9BB5">다른 나라 스토어에 들어옴</text>
+          <text x="660" y="146" font-size="12" font-weight="400" fill="#6B7688">상단에 “○○ 스토어로 갈까요?” 배너</text>
+          <rect x="470" y="181" width="380" height="64" rx="12" fill="#FAFBFD" stroke="#E8ECF3"/>
+          <text x="660" y="208" font-size="14" fill="#0E1526">한국·일본 외 국가 · 검색엔진</text>
+          <text x="660" y="229" font-size="12" font-weight="400" fill="#6B7688">안내 없음 — 상단 KR|JP 버튼으로 직접 선택</text>
+        </g>
+        <g stroke="#6B7688" stroke-width="1.6" fill="none" marker-end="url(#b)">
+          <line x1="172" y1="130" x2="227" y2="130"/>
+          <path d="M402 130 C435 130 435 47 467 47"/>
+          <line x1="402" y1="130" x2="467" y2="130"/>
+          <path d="M402 130 C435 130 435 213 467 213"/>
+        </g>
+      </svg>
+    </div>
+
+    <h3>손님별로 이렇게 보입니다</h3>
+    <div class="tbl">
+      <table>
+        <tr><th>접속 위치</th><th>들어온 곳</th><th>보이는 것</th></tr>
+        <tr><td class="k">한국</td><td>한국 스토어</td><td>그대로 (안내 없음)</td></tr>
+        <tr class="rec"><td class="k">한국</td><td>일본 스토어</td><td>한국어 배너: “한국에서 접속하셨네요. 한국 스토어로 이동할까요?”</td></tr>
+        <tr><td class="k">일본</td><td>일본 스토어</td><td>그대로 (안내 없음)</td></tr>
+        <tr class="rec"><td class="k">일본</td><td>한국 스토어</td><td>일본어 배너: “日本からアクセスされています。日本ストアへ移動しますか？”</td></tr>
+        <tr><td class="k">그 외 국가</td><td>어디든</td><td>안내 없음. 상단 KR|JP 버튼은 항상 있음</td></tr>
+      </table>
+    </div>
+
+    <h3>배너 예시 (한국 스토어에 일본 손님이 들어온 경우)</h3>
+    <div class="banner-mock">
+      <div class="bar"><span>日本からアクセスされています。日本ストアへ移動しますか？</span><span class="btns"><span class="b1">日本ストアへ</span><span class="b2">このまま見る</span></span></div>
+      <div class="page">한국 스토어 화면</div>
+    </div>
+    <ul>
+      <li>「이동」을 누르면 두 스토어에 모두 있는 화면(카테고리·이용안내 등)은 <b>같은 화면</b>으로, 그 외(상품 상세·검색 등)는 상대 스토어 첫 화면으로 넘어갑니다. 상단 KR|JP 버튼과 같은 규칙입니다.</li>
+      <li>「그냥 보기」를 누르면 그 손님에게는 30일간 다시 띄우지 않습니다.</li>
+    </ul>
+
+    <h3>방식 비교</h3>
+    <div class="cmp">
+      <div class="opt best">
+        <div class="ot">A. 안내 배너로 권유 <span class="pill">추천</span></div>
+        <ul>
+          <li><span class="good">○</span> 손님이 선택권을 가짐 (해외 거주 한국인, 출장자 등)</li>
+          <li><span class="good">○</span> 구글 검색 노출에 영향 없음</li>
+          <li><span class="good">○</span> 추가 비용 없음, 우리가 테마에 직접 적용</li>
+          <li><span class="bad">△</span> 배너를 무시하면 다른 스토어에 머무를 수 있음</li>
+        </ul>
+      </div>
+      <div class="opt">
+        <div class="ot">B. 자동으로 강제 이동</div>
+        <ul>
+          <li><span class="good">○</span> 손님이 신경 쓸 필요 없음</li>
+          <li><span class="bad">✕</span> 구글 검색로봇이 주로 미국 IP라 한쪽 스토어만 검색에 잡힐 위험</li>
+          <li><span class="bad">✕</span> 일본에서 한국 스토어를 보고 싶은 손님도 강제로 이동됨</li>
+          <li><span class="bad">✕</span> Shopify도 강제 이동은 권장하지 않음</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="note"><b>잘못 들어와도 결제는 막힙니다</b> · 한국 스토어는 국내 배송만, 일본 스토어는 일본 배송만 열어 두어서 다른 나라 주소로는 주문이 되지 않습니다. 배너는 “편하게 안내”하는 역할입니다.</div>
+    <div class="rec-box"><b>함께 검토</b> · 지금은 Shopify 기본 주소를 쓰고 있습니다. 오픈 전에 한국·일본 각각 회사 도메인을 연결하면 손님이 주소만 보고도 나라를 구분할 수 있습니다.</div>
+  </section>
+
+  <!-- 3 결정 -->
+  <section class="card">
+    <div class="sec-head"><span class="sec-no">03</span><h2>대표님 결정이 필요한 것</h2></div>
+    <div class="tbl">
+      <table>
+        <tr><th>#</th><th>안건</th><th>추천안</th></tr>
+        <tr><td class="k">1</td><td>PG사 상담 진행</td><td>결제 연결 앱 + 국내 PG사 견적 비교 후 선택</td></tr>
+        <tr><td class="k">2</td><td>국가별 접속 방식</td><td>A. 안내 배너 — <b>10/23 승인·적용 완료</b> (KR v12 · JP v20)</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <footer>SEOUL SHOWROOM · SEOUL COLLECTIVE 한·일 스토어 · 수수료 수치는 공개 자료 기준 추정치이며 실제 견적으로 확정합니다.</footer>
+</div>
+</body>
+</html>

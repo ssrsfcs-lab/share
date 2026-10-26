@@ -1,0 +1,404 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SEOUL COLLECTIVE 한·일 스토어 회의</title>
+<style>
+  :root{
+    --bg:#F7F9FC; --card:#FFFFFF; --ink:#0E1526; --muted:#6B7688; --line:#E8ECF3;
+    --blue:#2657E8; --blue-soft:#EEF3FE; --warn:#B45309; --warn-soft:#FFF6E6;
+    --fail:#D14343; --fail-soft:#FDEFEF; --ok:#0E9BB5; --ok-soft:#E8F7FA;
+    --violet:#6D4FE0; --violet-soft:#F1EEFC; --key:#FAFBFD;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:"Pretendard","SUIT","Malgun Gothic","맑은 고딕",-apple-system,"Segoe UI",sans-serif;
+    font-size:15px;line-height:1.65;word-break:keep-all;overflow-wrap:break-word}
+  .wrap{max-width:1040px;margin:0 auto;padding:40px 24px 80px}
+  .eyebrow{font-size:12px;letter-spacing:.2em;color:var(--muted);font-weight:700;text-transform:uppercase}
+  h1{font-size:32px;font-weight:800;letter-spacing:-.02em;margin:10px 0 8px;line-height:1.3}
+  h1 em{font-style:normal;color:var(--blue)}
+  .sub{color:var(--muted);margin:0}
+  .meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+  .pill{display:inline-flex;align-items:center;gap:6px;padding:4px 11px;border-radius:20px;font-size:12.5px;font-weight:700;background:var(--blue-soft);color:var(--blue)}
+  .pill::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+  .pill.warn{background:var(--warn-soft);color:var(--warn)}
+  .pill.ok{background:var(--ok-soft);color:var(--ok)}
+  .pill.violet{background:var(--violet-soft);color:var(--violet)}
+  .pill.fail{background:var(--fail-soft);color:var(--fail)}
+
+  section.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:28px 30px;margin-top:22px}
+  .sec-head{display:flex;align-items:baseline;gap:12px;margin-bottom:6px}
+  .sec-no{font-size:13px;font-weight:800;color:var(--blue);letter-spacing:.08em}
+  h2{font-size:21px;font-weight:800;letter-spacing:-.01em;margin:0}
+  h3{font-size:16px;font-weight:800;margin:24px 0 8px}
+  .lead{color:var(--muted);margin:4px 0 16px}
+  p{margin:8px 0}
+  ul{margin:8px 0;padding-left:20px}
+  li{margin:3px 0}
+  b,strong{font-weight:700}
+
+  .tbl{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;margin:12px 0}
+  table{border-collapse:collapse;width:100%;min-width:560px;font-size:14px}
+  th{background:var(--ink);color:#fff;font-weight:700;text-align:left;padding:10px 12px;white-space:nowrap}
+  td{padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+  td.k{background:var(--key);font-weight:700;white-space:nowrap}
+  td.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+  tr.rec td{background:var(--blue-soft)}
+  .memo{min-width:150px;color:var(--muted)}
+  .memo::after{content:"";display:block;border-bottom:1px dashed #C9D1DE;height:22px}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:14px}
+  .stat{border:1px solid var(--line);border-radius:14px;padding:16px 18px;background:var(--key)}
+  .stat .v{font-size:24px;font-weight:800;letter-spacing:-.01em}
+  .stat .l{font-size:13px;color:var(--muted)}
+
+  .decision{border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin-top:14px}
+  .decision .dh{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+  .decision .dt{font-size:16px;font-weight:800}
+  .decision .why{color:var(--muted);font-size:14px;margin:6px 0 4px}
+  .rec-box{background:var(--blue-soft);border-radius:10px;padding:10px 14px;margin-top:10px;font-size:14px}
+  .rec-box b{color:var(--blue)}
+  .note{background:var(--warn-soft);color:#7A3E06;border-radius:10px;padding:10px 14px;margin-top:10px;font-size:14px}
+  .decide-line{margin-top:12px;font-size:13.5px;color:var(--muted)}
+  .decide-line span{display:inline-block;min-width:60%;border-bottom:1px dashed #C9D1DE;height:20px;vertical-align:bottom;margin-left:6px}
+
+  .flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:12px 0}
+  .flow .step{background:var(--key);border:1px solid var(--line);border-radius:10px;padding:8px 12px;font-size:13.5px;font-weight:700}
+  .flow .arr{color:var(--muted)}
+  .check li{list-style:none;margin-left:-20px;padding-left:24px;position:relative}
+  .check li::before{content:"✓";position:absolute;left:0;color:var(--ok);font-weight:800}
+  code{background:#F1F4F9;border-radius:6px;padding:1px 6px;font-size:13px}
+  footer{color:var(--muted);font-size:12.5px;margin-top:28px}
+
+  @media (max-width:640px){
+    .wrap{padding:28px 16px 60px}
+    h1{font-size:26px}
+    section.card{padding:22px 18px}
+  }
+  @media print{
+    body{background:#fff;font-size:12.5px}
+    .wrap{padding:0;max-width:none}
+    section.card{break-inside:avoid-page;border-color:#d8dde6;margin-top:14px;padding:18px 20px}
+    .decision{break-inside:avoid}
+    th{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    tr.rec td,.rec-box,.note,.pill,.stat{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <p style="margin:0 0 14px;font-size:13px;font-weight:700"><a href="../../" style="color:#2657E8;text-decoration:none">← 공유 문서</a></p>
+  <div class="eyebrow">SEOUL SHOWROOM · MEETING BRIEF</div>
+  <h1>SEOUL COLLECTIVE <em>한·일 스토어</em> 오픈 준비 회의</h1>
+  <p class="sub">두 스토어 구축·테스트 상품 등록·결제 흐름 시험까지 마친 상태에서, 오픈 전 남은 결정 사항 정리</p>
+  <div class="meta">
+    <span class="pill">2026.10.23 업데이트</span>
+    <span class="pill violet">내부 회의용</span>
+    <span class="pill ok">결정 완료 3건</span>
+    <span class="pill warn">결정 필요 7건</span>
+  </div>
+
+  <!-- 1 -->
+  <section class="card">
+    <div class="sec-head"><span class="sec-no">01</span><h2>현재까지 진행 상황</h2></div>
+    <p class="lead">10/22 기준 두 스토어에 테스트 상품 44개를 등록하고 한국 스토어에서 주문·결제·발송 흐름까지 시험했습니다. 등록 도구는 준비됐고, 남은 것은 가격·배송·결제 같은 운영 정책 결정입니다.</p>
+    <div class="grid">
+      <div class="stat"><div class="v">6개 브랜드</div><div class="l">자사몰 크롤링 연결 완료</div></div>
+      <div class="stat"><div class="v">1,598개</div><div class="l">수집 상품 (옵션 4,367개)</div></div>
+      <div class="stat"><div class="v">스토어 2개</div><div class="l">한국(원화)·일본(엔화) 구축, 브랜드명 SEOUL COLLECTIVE</div></div>
+      <div class="stat"><div class="v">테스트 44개</div><div class="l">두 스토어 초안 등록, 브랜드별 3개씩 15개 공개(비밀번호 걸린 상태)</div></div>
+      <div class="stat"><div class="v">주문 시험</div><div class="l">한국 스토어 테스트 결제 → 주문 메일 → 발송 처리까지 정상</div></div>
+      <div class="stat"><div class="v">사가와</div><div class="l">일본 국내 배송 택배사 고정·추적 연동</div></div>
+      <div class="stat"><div class="v">Claude API</div><div class="l">번역·상세정보 판독 연동 (월 $100 크레딧)</div></div>
+    </div>
+    <h3>완료 항목</h3>
+    <ul class="check">
+      <li>일본몰 디자인·구조 (홈, 상품목록, 상세, 사이즈 가이드, 카트, 특정상거래법 등 안내 페이지) — 개발 스토어</li>
+      <li>6개 브랜드 자사몰 상품 수집 (상품명·정가·옵션·품절·이미지) → 검수용 엑셀</li>
+      <li>상세페이지 필수 정보(실측·소재·세탁·제조국) 추출 가능 여부 확인 — 텍스트 4곳, 이미지 판독 2곳</li>
+      <li>사가와: 체크아웃 배송명 「送料無料・佐川急便」, 발송 시 사가와 추적 링크 자동 생성 확인</li>
+      <li>Claude API 키 연동 및 번역 테스트 (着丈 77cm、身幅 68cm 정상 변환)</li>
+      <li><b>[10/21] 한국 스토어 구축</b> — 일본 테마를 옮겨 한국어·원화·국내 기준으로 전환, 견본 상품 10개로 레이아웃 검수</li>
+      <li><b>[10/21] 브랜드명 SEOUL COLLECTIVE</b> — 한국·일본 스토어 로고·문구·검색 정보 전환 (운영 법인명 「서울쇼룸」은 법정 표기에 유지)</li>
+      <li><b>[10/21] 두 스토어 API 연결</b> — 연동 스크립트가 한국·일본 스토어를 동시에 다룰 수 있음 (상품 일괄 등록 준비)</li>
+      <li><b>[10/22] KR | JP 전환 버튼</b> — 두 스토어 헤더(모바일은 메뉴 안), 같은 페이지가 있으면 같은 페이지로 이동</li>
+      <li><b>[10/22] 두 스토어 동시 등록 도구</b> — 대상 목록 → 자사몰 재수집·상세정보 추출·번역·가격 → 검수 엑셀 → 두 스토어 초안 등록</li>
+      <li><b>[10/22] 한국 상세페이지</b> — 정리 정보(실측·소재·고시) 아래 브랜드 상세 이미지·스토리 자동 첨부 (한국만, 일본은 정리 정보만)</li>
+      <li><b>[10/22] 색상 필터</b> — 브랜드마다 다른 색상명을 블랙·베이지 등 계열로 묶어 필터 (두 스토어)</li>
+      <li><b>[10/22] 수집 정확도</b> — 카미노 시즌·기모 옵션과 옵션 추가금 처리, 플로브 상세 구조 대응, 중복 게시·색상별 분리 상품 판별</li>
+      <li><b>[10/22] 일본 스토어 이전 도구</b> — 새 스토어만 만들면 페이지·컬렉션·상품·메뉴·테마 복사 가능</li>
+      <li><b>[10/23] 두 스토어 테마 Horizon 4.3</b> — 최신 버전으로 올리면서 우리가 고친 코드 유지, KR | JP 버튼은 PC 헤더 돋보기 왼쪽·모바일 공지 띠로 정리</li>
+      <li><b>[10/23] 국가별 접속 안내</b> — 한국 스토어에 일본 IP, 일본 스토어에 한국 IP로 들어오면 「○○ 스토어로 갈까요?」 배너 (강제 이동 없음)</li>
+      <li><b>[10/23] 한국 알림 메일 8종 해요체</b> — 주문 확인, 배송 4종(출발·정보 변경·배송 중·도착), 주문 취소, 환불, 장바구니 이탈 메일 문구·제목 교체 (일본은 자동 번역 유지)</li>
+      <li><b>[10/23] 한국 스토어 기본 언어 한국어로 전환</b> — 기본값이 영어로 되어 있어 영어판 주소가 따로 열려 있던 것을 정리 (결제 화면·메일 기본 언어도 한국어로)</li>
+      <li><b>[10/23] 검색엔진 국가 연결(hreflang)</b> — 구글에 「이 페이지의 한국판·일본판」을 알려 두 스토어가 중복 사이트로 보이지 않고 나라별 검색에 맞는 스토어가 나오게 함 (등록 도구로 올리는 상품은 자동 연결)</li>
+      <li><b>[10/23] 오픈 전 1차 점검</b> — 두 스토어 페이지 88개 오류 없음 · 견본 상품 15개 보관 처리 · 일본 하단 메뉴 깨진 링크 정리 · 일본 홈 브랜드 목록을 입점 6개 브랜드로 교체</li>
+    </ul>
+    <h3>테스트 등록·주문 시험 결과 (10/22)</h3>
+    <div class="tbl"><table>
+      <tr><th>항목</th><th>결과</th></tr>
+      <tr><td class="k">등록</td><td>5개 브랜드 최신 상품 48개 수집 → 중복 게시 2개 제외·색상별 분리 2쌍 합침 → <b>44개</b> 두 스토어 초안 등록 (엑셉턴스레터는 원화 정가 없어 제외)</td></tr>
+      <tr><td class="k">상세정보 추출</td><td>최신 상품은 대부분 실측·소재 추출. 옛 상품(2023년 무렵)은 상세 구조가 달라 거의 못 찾음 → 선별 기준에 반영 권장(안건 ⑦)</td></tr>
+      <tr><td class="k">한국 주문 시험</td><td>테스트 결제 → 주문 생성·결제 완료 → 재고 1개 차감 → 주문 확인 메일 → 발송 처리(택배사·송장) → 발송 안내 메일 발송 기록 확인</td></tr>
+      <tr><td class="k">발견한 점</td><td>Shopify 택배사 목록에 한국 택배사 없음(「기타」+조회 주소로 처리) · 주문 메일 「세금 0원」 줄 · 발신 주소가 개인 Gmail이라 스팸 분류 위험 · 기본 메일 문구가 합니다체</td></tr>
+    </table></div>
+    <h3>한국 스토어 구축 내역 (10/21)</h3>
+    <div class="tbl"><table>
+      <tr><th>영역</th><th>내용</th></tr>
+      <tr><td class="k">디자인</td><td>한국어 서체(Pretendard)·자간 재조정, 모바일 로고·제목 줄바꿈 정리, 파비콘(SC)</td></tr>
+      <tr><td class="k">카피</td><td>메인 「지금 서울에서 주목받는 디자이너 브랜드」 · 고객 안내는 해요체, 브랜드 소개는 명사형으로 통일</td></tr>
+      <tr><td class="k">상품 상세</td><td><b>상품정보제공고시</b>(소재·색상·치수·제조자·제조국·세탁·제조연월·품질보증·A/S) 표 추가, 「장바구니 담기」 등 국내 쇼핑몰 표현</td></tr>
+      <tr><td class="k">가격 표기</td><td>「68,000원」 형식 통일 (상품·장바구니·주문 메일)</td></tr>
+      <tr><td class="k">탐색</td><td>브랜드 페이지 6개(소개 포함), 필터: 브랜드·사이즈·색상·가격·재고</td></tr>
+      <tr><td class="k">리뷰</td><td>Judge.me 설치 — 상품 상세 리뷰 목록·별점 배지, 리뷰 0개는 숨김</td></tr>
+      <tr><td class="k">법정 표기</td><td>푸터 사업자 정보, 사업자 정보·이용약관·개인정보처리방침 페이지 (값은 확정 후 입력)</td></tr>
+      <tr><td class="k">검색·공유</td><td>홈 검색 제목·설명, 카카오톡·SNS 공유 이미지</td></tr>
+    </table></div>
+    <h3>브랜드별 수집 결과</h3>
+    <div class="tbl"><table>
+      <tr><th>브랜드</th><th>자사몰</th><th>솔루션</th><th>상품 수</th><th>정가 범위</th><th>상세 정보</th></tr>
+      <tr><td class="k">엑셉턴스레터</td><td>acceptanceletterstudio.eu</td><td>Shopify</td><td class="num">84</td><td><b>유로만 있음</b></td><td>텍스트 (소재·원산지)</td></tr>
+      <tr><td class="k">이외들</td><td>ioedle.com</td><td>카페24</td><td class="num">252</td><td class="num">34,000 ~ 359,000원</td><td>최근 상품 텍스트 / 예전 상품 이미지</td></tr>
+      <tr><td class="k">프릭스바이김태훈</td><td>freaks-online.co.kr</td><td>카페24</td><td class="num">159</td><td class="num">79,000 ~ 678,000원</td><td>텍스트 (실측·소재)</td></tr>
+      <tr><td class="k">라이</td><td>liecollection.com</td><td>카페24</td><td class="num">256</td><td class="num">65,000 ~ 835,000원</td><td>이미지 판독</td></tr>
+      <tr><td class="k">플로브</td><td>flove.day</td><td>카페24</td><td class="num">417</td><td class="num">17,800 ~ 459,000원</td><td>이미지 판독 (상세 이미지 속 정보표)</td></tr>
+      <tr><td class="k">카미노</td><td>caminoseoul.com</td><td>아임웹</td><td class="num">430</td><td class="num">33,930 ~ 498,000원</td><td>이미지 판독</td></tr>
+    </table></div>
+    <p style="font-size:13.5px;color:var(--muted)">※ 상품 수에는 이전 시즌·품절 상품이 포함되어 있어 실제 등록 대상은 선별 후 줄어듭니다. 플로브·카미노는 자사몰에서 거의 전 상품 세일 중.</p>
+  </section>
+
+  <!-- 2 -->
+  <section class="card">
+    <div class="sec-head"><span class="sec-no">02</span><h2>확정된 사항</h2></div>
+    <div class="tbl"><table>
+      <tr><th>항목</th><th>내용</th></tr>
+      <tr><td class="k">판매 구조</td><td><b>한국·일본 모두 판매</b> — 판매 사업자는 한국 법인만 (일본 법인 없음)</td></tr>
+      <tr><td class="k">스토어 구성 <span class="pill ok">10/21</span></td><td><b>Shopify 스토어 2개</b> (한국: 원화 / 일본: 엔화) — 결제 통화 제약 때문. 한국 스토어 구축 완료</td></tr>
+      <tr><td class="k">브랜드명 <span class="pill ok">10/21</span></td><td><b>SEOUL COLLECTIVE</b> (한국·일본 공통). 법정 표기의 운영 법인명은 「서울쇼룸」 유지</td></tr>
+      <tr><td class="k">카피 톤 <span class="pill ok">10/21</span></td><td>고객 안내 문구는 해요체, 버튼·라벨은 명사형, 브랜드 소개는 명사형 종결</td></tr>
+      <tr><td class="k">입점 브랜드</td><td>엑셉턴스레터, 이외들, 프릭스바이김태훈, 라이, 플로브, 카미노 (6개)</td></tr>
+      <tr><td class="k">상품 원본</td><td>각 브랜드 자사몰 크롤링 (브랜드 크롤링 동의 완료)</td></tr>
+      <tr><td class="k">일본 판매가</td><td>한국 정가 기준 산식(마진·물류비 포함) → 엔화 환산 노출 <span style="color:var(--muted)">(세부 산식은 내부 자료)</span></td></tr>
+      <tr><td class="k">가격 기준</td><td>자사몰 <b>정가</b> (세일가 아님)</td></tr>
+      <tr><td class="k">일본 반품배송비</td><td>36,000원 (엔화로 환산해 표기)</td></tr>
+      <tr><td class="k">일본 배송</td><td>한→일 운송 <b>물류사</b>(예정) → 일본 도착·통관 후 <b>사가와</b> 국내 배송</td></tr>
+      <tr><td class="k">도메인</td><td><code>seoulcollective.net</code> = 회사 홈페이지 / <code>seoulcollective.kr</code> = 쇼핑몰</td></tr>
+      <tr><td class="k">접속 방식 <span class="pill ok">10/23</span></td><td>접속 IP가 상대 나라면 <b>「○○ 스토어로 갈까요?」 안내 배너</b>(강제 이동 대신 권유 — 검색 노출 보호·손님 선택권) + 헤더 <b>KR / JP 전환 버튼</b>. 두 스토어 적용 완료</td></tr>
+      <tr><td class="k">상세페이지 <span class="pill ok">10/22</span></td><td>한국: 정리 정보 + <b>브랜드 상세 이미지·스토리</b> / 일본: 정리 정보(실측·소재·세탁·제조국)만</td></tr>
+      <tr><td class="k">상품 정리 규칙 <span class="pill ok">10/22</span></td><td>브랜드가 색상별로 따로 올린 상품은 <b>한 상품에 색상 옵션</b>으로 합침 · 상품명은 브랜드 원문 유지(판촉 문구·색상명만 정리)</td></tr>
+      <tr><td class="k">색상 필터 <span class="pill ok">10/22</span></td><td>색상명은 브랜드 원문 그대로, 필터는 계열(블랙·베이지·그레이 등 16개)로 표시</td></tr>
+    </table></div>
+  </section>
+
+  <!-- 3 -->
+  <section class="card">
+    <div class="sec-head"><span class="sec-no">03</span><h2>스토어 구조: 한국·일본 스토어 분리 <span class="pill ok">확정·구축</span></h2></div>
+    <p class="lead">한국 사업자만 있는 조건에서는 한 스토어로 원화·엔화를 동시에 결제받을 수 없어, 10/20 회의 후 스토어 2개(A안)로 확정하고 10/21 한국 스토어를 구축했습니다.</p>
+    <div class="note"><b>왜 분리하나</b> — 여러 통화로 실제 결제받으려면 Shopify 자체 결제(Shopify Payments)가 필요한데, 한국 사업자는 가입 대상이 아닙니다. 외부 PG(국내·일본 결제대행사)를 쓰면 모든 고객이 스토어 기본 통화로만 결제합니다. 한 스토어(기본 통화 엔화)로 운영하면 <b>한국 고객도 화면엔 원화가 보이지만 엔화로 청구</b>되어 사실상 한국 판매가 불가합니다.</div>
+    <h3>검토한 구조</h3>
+    <div class="tbl"><table>
+      <tr><th>안</th><th>구조</th><th>결제</th><th>평가</th></tr>
+      <tr class="rec"><td class="k">A. 스토어 2개</td><td>한국 스토어(원화) + 일본 스토어(엔화)</td><td>한국: 국내 PG / 일본: 결제대행사 A·B</td><td><b>추천.</b> 한국 법인만으로 가능</td></tr>
+      <tr><td class="k">B. 스토어 1개</td><td>한·일 마켓, 기본 통화 엔화</td><td>외부 PG → 전부 엔화 결제</td><td>한국 판매 사실상 불가</td></tr>
+      <tr><td class="k">C. 일본 법인 설립</td><td>스토어 1개 + 일본 Shopify Payments</td><td>다통화 결제 (정산 엔화)</td><td>법인·계좌 개설 부담, 국내 간편결제는 별도</td></tr>
+    </table></div>
+    <h3>A안 운영 구조</h3>
+    <div class="tbl"><table>
+      <tr><th></th><th>한국 스토어</th><th>일본 스토어</th></tr>
+      <tr><td class="k">현황</td><td><b>구축 완료</b> · 정식 전환 가능한 개발 스토어 (오픈 시 그대로 전환)</td><td><b>구축 완료</b> · 테스트용 개발 스토어 → <b>오픈 전 정식 전환 가능한 스토어로 이전 필요</b> (테마·상품·페이지 이전, 대부분 자동)</td></tr>
+      <tr><td class="k">주소 (추천안)</td><td><code>seoulcollective.kr</code></td><td><code>jp.seoulcollective.kr</code> → 추후 <code>seoulcollective.jp</code></td></tr>
+      <tr><td class="k">언어</td><td>한국어</td><td>일본어</td></tr>
+      <tr><td class="k">통화·가격</td><td>원화 · <b>산식 미정</b></td><td>엔화 · 정가 기준 산식 → 엔화</td></tr>
+      <tr><td class="k">배송</td><td><b>택배사·배송비 미정</b></td><td>물류사 + 사가와</td></tr>
+      <tr><td class="k">결제</td><td>국내 PG (Shopify 연동 가능 업체)</td><td>일본 결제대행사 A·B (카드·PayPay·편의점)</td></tr>
+      <tr><td class="k">법정 표기</td><td>사업자정보·통신판매업</td><td>특정상거래법 고지</td></tr>
+      <tr><td class="k">디자인</td><td>일본 스토어 테마를 복제해 한국어로 전환</td><td>현행 유지</td></tr>
+      <tr><td class="k">Shopify 요금</td><td colspan="2">스토어마다 요금제 별도</td></tr>
+    </table></div>
+    <div class="flow">
+      <span class="step">브랜드 자사몰 크롤링 (한국어 원문)</span><span class="arr">→</span>
+      <span class="step">연동 스크립트 (산식·번역)</span><span class="arr">→</span>
+      <span class="step">한국 스토어: 원문·원화</span><span class="arr">+</span>
+      <span class="step">일본 스토어: 번역·엔화</span>
+    </div>
+    <p style="font-size:14px">상품·재고는 원본(브랜드 자사몰) 기준으로 우리 스크립트가 두 스토어에 함께 등록·갱신하므로 이중 관리 부담은 크지 않습니다. KR/JP 버튼과 IP 자동 연결은 두 스토어 사이를 링크로 연결해 구현합니다. 주문·고객은 스토어별로 따로 관리됩니다.</p>
+
+    <h3>요금 비교</h3>
+    <p style="font-size:14px;color:var(--muted);margin-top:0">Shopify 한국 요금표 기준 (shopify.com/kr/pricing, 2026.10.20 확인, 달러 청구). 환산은 1달러 ≈ 1,400원 가정.</p>
+    <div class="tbl"><table>
+      <tr><th>요금제</th><th>월 요금 (연간 결제)</th><th>월 요금 (월별 결제)</th><th>외부 PG 사용 시 Shopify 수수료</th><th>직원 계정</th></tr>
+      <tr class="rec"><td class="k">Basic</td><td class="num">$19 (약 2.7만 원)</td><td class="num">$25 (약 3.5만 원)</td><td class="num">매출의 2%</td><td>미포함</td></tr>
+      <tr><td class="k">Grow</td><td class="num">$49 (약 6.9만 원)</td><td class="num">$65 (약 9.1만 원)</td><td class="num">매출의 1%</td><td>5개</td></tr>
+      <tr><td class="k">Advanced</td><td class="num">$299</td><td class="num">$399</td><td class="num">매출의 0.6%</td><td>15개</td></tr>
+    </table></div>
+    <p style="font-size:13.5px;color:var(--muted)">※ Shopify 자체 결제를 못 쓰는 한국 사업자는 외부 PG를 쓰므로, PG 수수료와 별도로 위 「Shopify 수수료」가 매출에 붙습니다. 신규 스토어는 3일 무료 체험 후 3개월간 월 $1 프로모션.</p>
+
+    <div class="tbl"><table>
+      <tr><th>구조</th><th>월 고정비 (Basic 기준)</th><th>거래당 비용</th><th>비고</th></tr>
+      <tr class="rec"><td class="k">A. 스토어 2개</td><td class="num">$38 ~ $50<br>(약 5.3만 ~ 7만 원)</td><td>Shopify 2% + 각 PG 수수료</td><td>한·일 모두 판매 가능</td></tr>
+      <tr><td class="k">B. 스토어 1개</td><td class="num">$19 ~ $25<br>(약 2.7만 ~ 3.5만 원)</td><td>Shopify 2% + PG 수수료</td><td>한국 고객도 엔화 결제 → 한국 판매 불가</td></tr>
+      <tr><td class="k">C. 일본 법인</td><td class="num">$19 ~ $25<br>+ 일본 법인 유지비</td><td>Shopify 자체 결제 수수료만 (외부 PG 수수료 없음)</td><td>법인 설립·세무·계좌 비용 별도 (견적 필요)</td></tr>
+    </table></div>
+
+    <div class="tbl"><table>
+      <tr><th>PG 수수료 (거래당)</th><th>요율</th><th>상태</th></tr>
+      <tr><td class="k">일본 결제대행사 B (일본)</td><td>해외카드 4.5% · 편의점 4.5% · PayPay 심사 후 결정</td><td>공개 요율</td></tr>
+      <tr><td class="k">일본 결제대행사 A (일본)</td><td>—</td><td>문의 필요 (해외 계좌 정산 시 회당 ¥2,500)</td></tr>
+      <tr><td class="k">국내 PG (한국)</td><td>—</td><td>Shopify 연동 업체 선정 후 문의</td></tr>
+    </table></div>
+
+    <div class="rec-box"><b>요금제 선택 기준</b> — Basic → Grow로 올리면 월 요금은 $40(약 5.6만 원) 늘고 Shopify 수수료는 1%p 줄어듭니다. <b>스토어당 월 매출이 약 $4,000(약 560만 원)을 넘으면 Grow가 유리</b>합니다. 오픈 초기는 Basic으로 시작하고 매출을 보며 스토어별로 올리는 것을 추천합니다.</div>
+    <p style="font-size:13.5px;color:var(--muted)">예) 일본 스토어 월 매출 1,000만 원 · Basic · 일본 결제대행사 B 카드 결제 기준 → Shopify 수수료 20만 원 + PG 수수료 45만 원 + 월 요금 약 3.5만 원 ≈ 68.5만 원 (매출의 약 6.9%)</p>
+  </section>
+
+  <!-- 4 -->
+  <section class="card">
+    <div class="sec-head"><span class="sec-no">04</span><h2>결정할 안건</h2></div>
+    <p class="lead">상품 등록 시험(20개) 전에 정해야 데이터 구조를 다시 손대지 않습니다. 파란 줄이 추천안입니다.</p>
+
+    <div class="decision">
+      <div class="dh"><span class="pill ok">결정 완료</span><span class="dt">① 스토어 구조 확정</span></div>
+      <p class="why">한국 사업자만 있어 결제 통화 제약상 <b>A안(한국·일본 스토어 2개)</b>이 현실적입니다 (03 참조). 스토어마다 Shopify 요금제가 따로 나오는 점 포함해 확정이 필요합니다.</p>
+      <div class="rec-box"><b>추천</b> A안 — 한국 스토어 신규 개설(현 일본 스토어 테마 복제), 일본 스토어는 현행 유지. 일본 법인 설립(C안)은 매출 규모가 커진 뒤 재검토.</div>
+      <div class="decide-line">결정 <span></span></div>
+    </div>
+
+    <div class="decision">
+      <div class="dh"><span class="pill fail">우선</span><span class="dt">② 일본 스토어 주소</span></div>
+      <p class="why">스토어가 나뉘면 <code>seoulcollective.kr/ja</code> 같은 하위 주소는 쓸 수 없어 일본 스토어에 별도 주소가 필요합니다.</p>
+      <div class="tbl"><table>
+        <tr><th>안</th><th>일본 주소</th><th>특징</th></tr>
+        <tr class="rec"><td class="k">A. 서브도메인</td><td><code>jp.seoulcollective.kr</code></td><td>보유 도메인으로 바로 시작, 추가 비용 없음</td></tr>
+        <tr><td class="k">B. 일본 도메인</td><td><code>seoulcollective.jp</code></td><td>일본 고객 신뢰도 최고. 현재 미등록 — 등록에 <b>일본 내 주소</b> 필요 (대리 등록 서비스 또는 파트너 주소)</td></tr>
+      </table></div>
+      <div class="rec-box"><b>추천</b> A로 시작 → 일본 매출이 붙으면 B(.jp)로 이전. 이전해도 기존 주소는 자동 연결되어 링크가 끊기지 않음.</div>
+      <div class="decide-line">결정 <span></span></div>
+    </div>
+
+    <div class="decision">
+      <div class="dh"><span class="pill fail">우선</span><span class="dt">③ 한국 판매가 산식</span></div>
+      <p class="why">일본 판매가 산식은 확정. 한국 마켓 가격 기준이 필요합니다.</p>
+      <ul>
+        <li>정가 그대로 판매 / 정가에 별도 산식 적용 / 자사몰 세일가 연동 중 선택</li>
+      </ul>
+      <div class="note">플로브·카미노는 자사몰에서 거의 전 상품 세일 중이라, 정가로 팔면 한국 고객에게는 브랜드 자사몰보다 비싸 보일 수 있습니다.</div>
+      <div class="decide-line">결정 <span></span></div>
+    </div>
+
+    <div class="decision">
+      <div class="dh"><span class="pill fail">우선</span><span class="dt">④ 한국 배송 정책</span></div>
+      <ul>
+        <li>국내 택배사 (CJ대한통운·한진·롯데 등)</li>
+        <li>배송비 (무료 / 3,000원 / ○만 원 이상 무료 등), 반품·교환 배송비</li>
+      </ul>
+      <div class="note">결제 시험을 위해 한국 스토어에 「국내 표준 3,000원」을 <b>임시</b>로 넣어 두었습니다(특급·해외 요금은 삭제). 한국 택배사는 Shopify 목록에 없어 발송 처리 때 「기타」로 고르고 조회 주소를 넣거나, 송장 엑셀을 받아 일괄 입력하는 방식으로 운영합니다.</div>
+      <div class="decide-line">결정 <span></span></div>
+    </div>
+
+    <div class="decision">
+      <div class="dh"><span class="pill fail">우선</span><span class="dt">⑤ 일본 관세·소비세 부담 (DDP 여부)</span></div>
+      <p class="why">현재 일본 판매가 산식(마진·물류비)에는 일본 관세·소비세가 들어 있지 않습니다. 그런데 사이트에는 「関税・消費税込み / お届け時の追加請求なし」로 표기되어 있습니다.</p>
+      <ul>
+        <li>일본 개인수입: 과세가격(판매가×0.6)이 <b>1만 엔 이하면 면세</b> (판매가 약 16,600엔 이하)</li>
+        <li><b>니트(편물 의류)·가죽 제품은 금액과 무관하게 과세</b> — 관세 + 소비세 10%</li>
+        <li>2028년 4월부터 0.6 특례 폐지·통신판매 소액 물품 소비세 과세 예정</li>
+      </ul>
+      <div class="tbl"><table>
+        <tr><th>안</th><th>방식</th><th>영향</th></tr>
+        <tr><td class="k">A. 고객 부담 (DDU)</td><td>사가와 배달 시 고객이 세금 납부</td><td>산식 그대로, 사이트 표기 전면 수정, 이탈·수취거부 위험</td></tr>
+        <tr><td class="k">B. 당사 부담 (DDP)</td><td>통관 시 당사 납부, 가격에 포함</td><td>「관세 포함」 표기 유지, 산식에 세금분 추가 필요</td></tr>
+      </table></div>
+      <div class="rec-box"><b>먼저 확인</b> 물류비 견적에 관세 대납(DDP)이 포함되어 있는지 물류사에 확인 → 포함이면 현행 유지.</div>
+      <div class="decide-line">결정 <span></span></div>
+    </div>
+
+    <div class="decision">
+      <div class="dh"><span class="pill warn">이번 주</span><span class="dt">⑥ 환율 기준</span></div>
+      <ul>
+        <li>고정 환율 + 갱신 주기 (월 1회 등) / 매일 자동 반영</li>
+        <li>엔화 끝자리 처리 (그대로 / 끝자리 90 / 100엔 단위 올림)</li>
+        <li>반품배송비 36,000원의 엔화 표기 금액도 이 기준으로 확정</li>
+      </ul>
+      <div class="decide-line">결정 <span></span></div>
+    </div>
+
+    <div class="decision">
+      <div class="dh"><span class="pill warn">이번 주</span><span class="dt">⑦ 등록 상품 선별 기준</span></div>
+      <p class="why">수집 1,598개에는 이전 시즌·품절 상품이 섞여 있습니다.</p>
+      <ul>
+        <li>예) 최근 시즌만 / 판매 중 상품만 / 브랜드별 상위 N개 / 직접 선택</li>
+        <li>엑셉턴스레터 원화 정가 확인 (자사몰이 유로 가격만 제공) — 담당자 확인 중</li>
+      </ul>
+      <div class="rec-box"><b>추천</b> 판매 중인 <b>최근 시즌</b> 상품 위주. 10/22 테스트에서 옛 상품은 상세정보(실측·소재)를 거의 못 가져왔고, 최신 상품은 대부분 가져왔습니다.</div>
+      <h3>엑셉턴스레터 원화 정가 (10/23 확인)</h3>
+      <p>자사몰(acceptanceletterstudio.eu) 왼쪽 아래 통화 버튼으로 <b>KRW</b>를 고르면 원화가 보이지만, <b>원화 정가가 아니라 유로 가격 × 그날 환율</b>입니다. Shopify 기본 기능이 아닌 환율 변환 앱(Bucks Currency Converter)이 화면 표시만 바꾸며, 스토어 통화는 EUR 그대로입니다.</p>
+      <div class="tbl"><table>
+        <tr><th>상품 (2026 SS)</th><th>실제 가격</th><th>화면 원화 표시</th><th>계산</th></tr>
+        <tr><td class="k">Lazy Susan Sweater</td><td class="num">€199</td><td class="num">₩296,560</td><td>199 × 1,490.25</td></tr>
+        <tr><td class="k">Weekender Shorts</td><td class="num">€105</td><td class="num">₩156,476</td><td>105 × 1,490.25</td></tr>
+        <tr><td class="k">Frame Pants</td><td class="num">€205</td><td class="num">₩305,502</td><td>205 × 1,490.25</td></tr>
+      </table></div>
+      <ul>
+        <li>환율이 바뀌면 매일 금액이 달라지고(끝자리도 296,560원처럼 환산값), 우리 산식의 기준인 「한국 정가」로 쓰기 어렵습니다.</li>
+        <li>엑셉턴스레터도 서울 송파구의 한국 사업자이므로 원화 정가표를 받을 수 있는 상대입니다.</li>
+      </ul>
+      <div class="tbl"><table>
+        <tr><th>방법</th><th>장단점</th></tr>
+        <tr class="rec"><td class="k">① 브랜드에 원화 정가표 요청</td><td>가장 정확. 입점 계약 때 함께 받기 <b>(추천)</b></td></tr>
+        <tr><td class="k">② 국내 입점몰(무신사·29CM 등) 판매가 기준</td><td>입점 상품만 가능, 할인가가 섞일 수 있음</td></tr>
+        <tr><td class="k">③ 유로 가격 × 환율</td><td>간단하지만 환율에 따라 가격이 흔들리고 국내 판매가와 어긋날 수 있음</td></tr>
+      </table></div>
+      <div class="decide-line">결정 <span></span></div>
+    </div>
+
+    <div class="decision">
+      <div class="dh"><span class="pill ok">결정 완료</span><span class="dt">⑧ 상세페이지 처리 방식</span></div>
+      <p class="why"><b>필수 4항목</b>(실측 사이즈·소재·세탁·제조국)을 추출해 한국어·일본어 고정 양식으로 표시. <b>한국 스토어는 그 아래에 브랜드 상세 이미지·스토리 문구를 함께</b> 싣습니다(10/22 결정, 테스트 44개 적용).</p>
+      <ul>
+        <li>텍스트로 있는 브랜드(프릭스·플로브·이외들 최근·엑셉턴스레터): 그대로 추출</li>
+        <li>이미지에만 있는 브랜드(라이·카미노·이외들 예전): AI가 상세 이미지 마지막 1~2장 판독 — 시험 결과 정확히 읽힘</li>
+        <li>국내 배송비·교환 안내 등 브랜드 국내용 문구는 제외</li>
+      </ul>
+      <div class="note"><b>확인 필요</b> 브랜드 상세 이미지(촬영물·디자인)를 우리 판매 페이지에 싣는 것이 입점 조건에 포함되는지 브랜드별 동의 확인. 이미지 속에 브랜드 자사몰 쿠폰·배송 안내가 있으면 자동으로 못 거르므로 등록 후 화면 검수.</div>
+      <div class="decide-line">결정 <span></span></div>
+    </div>
+
+    <div class="decision">
+      <div class="dh"><span class="pill violet">병행</span><span class="dt">⑨ 판매 명의·결제(PG)</span></div>
+      <ul>
+        <li>판매 명의 사업자 확정 (PG 계약·법정 표기·약관의 전제)</li>
+        <li>일본: 카드 + PayPay + 편의점 결제 → 일본 결제대행사 A·B 문의 (Shopify 연동·한국 법인 가입 조건·수수료·정산)</li>
+        <li>한국: <b>결제 연결 앱 + 국내 PG사</b> 상담 제안 — 카드(카드사 앱결제 포함)·카카오페이·네이버페이·토스페이 가능. 필요 서류: 사업자등록증·통신판매업 신고증·정산 통장. 심사 1~3주, 간편결제는 별도 심사. 비용: PG 수수료(카드 약 2.5~3.5%) + Shopify 외부 결제 수수료(요금제별 0.5~2%)</li>
+      </ul>
+      <div class="note">주문·결제·발송 흐름은 Shopify 테스트 결제로 10/22 검증 완료. PG가 정해지면 같은 흐름을 실결제로 한 번 더 확인합니다.</div>
+      <p style="font-size:13.5px;color:var(--muted)">참고 — 일본 온라인 결제 이용 비중(2025년 조사): 신용카드 약 67~69%, PayPay 등 코드결제 약 27~30%, 편의점 결제 약 8~12%</p>
+      <div class="decide-line">결정 <span></span></div>
+    </div>
+  </section>
+
+  <!-- 5 -->
+  <section class="card">
+    <div class="sec-head"><span class="sec-no">05</span><h2>결정 후 진행 순서</h2></div>
+    <div class="tbl"><table>
+      <tr><th>단계</th><th>작업</th><th>선행 조건</th></tr>
+      <tr><td class="k">✓</td><td><s>한국 스토어 개설·한국어 전환</s> → 10/21 완료</td><td>—</td></tr>
+      <tr><td class="k">✓</td><td><s>상품 시험 등록·두 스토어 등록 도구·KR/JP 전환 버튼·색상 필터·한국 주문 시험</s> → 10/22 완료 (테스트 44개, 가격은 임시 기준)</td><td>—</td></tr>
+      <tr><td class="k">1</td><td>결정된 가격·환율 기준을 설정에 반영 → 테스트 상품 가격 재계산 또는 정리</td><td>안건 ③⑥</td></tr>
+      <tr><td class="k">2</td><td>일본 스토어: 관세 표기·반품배송비 엔화 금액 반영 / 한국 스토어: 배송비·반품비·사업자 정보 【 】 칸 채우기</td><td>안건 ②④⑤⑥</td></tr>
+      <tr><td class="k">3</td><td>알림 메일 정리: <s>한국 메일 8종 해요체</s>(10/23 완료) → 「세금 0원」 표기 정리, 발신 주소를 회사 도메인 메일로 인증</td><td>도메인</td></tr>
+      <tr><td class="k">4</td><td>일본 스토어 이전: 정식 전환 가능한 새 스토어 생성·앱 설치 → 이전 도구로 복사 → 필터·정책 등 수동 설정</td><td>—</td></tr>
+      <tr><td class="k">5</td><td>선별 상품 전체 등록 (초안으로 검수 후 공개, 한국은 브랜드 상세 포함)</td><td>안건 ⑦, 1단계</td></tr>
+      <tr><td class="k">6</td><td>스토어별 PG 연동·실결제 확인 → 두 스토어 정식 전환(Basic 요금제) → 도메인 연결(<code>seoulcollective.kr</code> / 일본 주소) → 오픈</td><td>안건 ②⑨</td></tr>
+    </table></div>
+    <p style="font-size:14px"><b>외부 확인 필요</b> — 물류사: 물류비 견적의 DDP 포함 여부·사가와 송장번호 전달 방식 / 결제사: 일본 결제대행사 A·B, 국내 PG사 / 도메인 등록업체: <code>.kr</code>·<code>.co.kr</code> 회사 계정 보유 확인</p>
+  </section>
+
+  <footer>서울쇼룸 · SEOUL COLLECTIVE 한·일 스토어 프로젝트 회의자료 · 2026.10.23 업데이트 · 수치는 개발 스토어 및 10/22~23 테스트 기준</footer>
+</div>
+</body>
+</html>
